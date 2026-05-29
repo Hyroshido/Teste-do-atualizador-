@@ -1,0 +1,30 @@
+{
+  "versao": "2026.05.29",
+  "arquivos": [
+    {
+      "nome": "SmartNFe.exe",
+      "descricao": "Módulo de NF-e: emissão, transmissão, consulta e gerenciamento de notas fiscais eletrônicas.",
+      "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartNFe.exe"
+    },
+    {
+      "nome": "SmartNFSe.exe",
+      "descricao": "Módulo de NFS-e: emissão e integração de notas fiscais de serviço.",
+      "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartNFSe.exe"
+    },
+    {
+      "nome": "SmartFood.exe",
+      "descricao": "Módulo Food: rotinas de restaurante, balcão, delivery e atendimento.",
+      "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartFood.exe"
+    },
+    {
+      "nome": "SmartCTE.exe",
+      "descricao": "Módulo CT-e: emissão, manutenção e controle de conhecimento de transporte eletrônico.",
+      "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartCTE.exe"
+    },
+    {
+      "nome": "SPED.exe",
+      "descricao": "Módulo SPED: geração, manutenção e validação de arquivos fiscais.",
+      "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SPED.exe"
+    }
+  ]
+}
