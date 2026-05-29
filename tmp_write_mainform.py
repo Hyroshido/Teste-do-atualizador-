@@ -1,4 +1,6 @@
-using DataSmartUpdater.Models;
+from pathlib import Path
+
+content = '''using DataSmartUpdater.Models;
 using DataSmartUpdater.Services;
 using System.Diagnostics;
 
@@ -129,21 +131,21 @@ public sealed class MainForm : Form
         _lblSubtitle.Top = 54;
         headerPanel.Controls.Add(_lblSubtitle);
 
-        _lblAppVersion.Text = "Vers„o do Atualizador: 1.0.0";
+        _lblAppVersion.Text = "Vers√£o do Atualizador: 1.0.0";
         _lblAppVersion.ForeColor = textGray;
         _lblAppVersion.AutoSize = true;
         _lblAppVersion.Left = headerLeft;
         _lblAppVersion.Top = 82;
         headerPanel.Controls.Add(_lblAppVersion);
 
-        _lblManifestVersion.Text = "Vers„o do Manifest: desconhecida";
+        _lblManifestVersion.Text = "Vers√£o do Manifest: desconhecida";
         _lblManifestVersion.ForeColor = textGray;
         _lblManifestVersion.AutoSize = true;
         _lblManifestVersion.Left = headerLeft;
         _lblManifestVersion.Top = 104;
         headerPanel.Controls.Add(_lblManifestVersion);
 
-        _lblConnection.Text = "? Online - Pronto para atualizar seu ambiente.";
+        _lblConnection.Text = "‚óè Online - Pronto para atualizar seu ambiente.";
         _lblConnection.ForeColor = Color.FromArgb(122, 220, 191);
         _lblConnection.AutoSize = true;
         _lblConnection.Left = headerLeft;
@@ -173,12 +175,12 @@ public sealed class MainForm : Form
 
         var cardLabels = new[]
         {
-            "MÛdulos Instalados",
-            "AtualizaÁıes DisponÌveis",
-            "⁄ltima ImplantaÁ„o",
-            "EspaÁo Livre",
+            "M√≥dulos Instalados",
+            "Atualiza√ß√µes Dispon√≠veis",
+            "√öltima Implanta√ß√£o",
+            "Espa√ßo Livre",
             "Status do Banco",
-            "Status da Conex„o"
+            "Status da Conex√£o"
         };
 
         for (var i = 0; i < cardLabels.Length; i++)
@@ -204,7 +206,7 @@ public sealed class MainForm : Form
 
         moduleCard.Controls.Add(new Label
         {
-            Text = "Lista de MÛdulos",
+            Text = "Lista de M√≥dulos",
             ForeColor = blue,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
@@ -237,16 +239,16 @@ public sealed class MainForm : Form
 
         _gridModules.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selecionar", HeaderText = "Selecionar", Width = 40 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 120 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "DescriÁ„o", FillWeight = 220 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Vers„o Atual", FillWeight = 70 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Vers„o Nova", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descri√ß√£o", FillWeight = 220 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Vers√£o Atual", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Vers√£o Nova", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Tamanho", HeaderText = "Tamanho", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Data", HeaderText = "Data", FillWeight = 80 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Status", FillWeight = 80 });
         moduleCard.Controls.Add(_gridModules);
 
         ConfigureButton(_btnSelectAll, "Selecionar todos", 0, 214, 140, 32, panelBackground, Color.White, moduleCard);
-        ConfigureButton(_btnClearAll, "Limpar seleÁ„o", 150, 214, 140, 32, panelBackground, Color.White, moduleCard);
+        ConfigureButton(_btnClearAll, "Limpar sele√ß√£o", 150, 214, 140, 32, panelBackground, Color.White, moduleCard);
         _btnSelectAll.Click += (_, _) => SetAllSelection(true);
         _btnClearAll.Click += (_, _) => SetAllSelection(false);
 
@@ -271,7 +273,7 @@ public sealed class MainForm : Form
             Top = 0
         });
 
-        _rbNoDb.Text = "N„o executar";
+        _rbNoDb.Text = "N√£o executar";
         _rbNoDb.Left = 0;
         _rbNoDb.Top = 30;
         _rbNoDb.Width = 260;
@@ -365,7 +367,7 @@ public sealed class MainForm : Form
         _lblProgressPercent.Width = 80;
         footerPanel.Controls.Add(_lblProgressPercent);
 
-        ConfigureButton(_btnRefresh, "Atualizar vis„o", 730, 14, 120, 32, panelBackground, Color.White, footerPanel);
+        ConfigureButton(_btnRefresh, "Atualizar vis√£o", 730, 14, 120, 32, panelBackground, Color.White, footerPanel);
         ConfigureButton(_btnUpdate, "Implantar Agora", 620, 14, 100, 32, blue, Color.White, footerPanel);
         ConfigureButton(_btnOpenLog, "Abrir log", 850, 14, 80, 32, panelBackground, Color.White, footerPanel);
         ConfigureButton(_btnClose, "Fechar", 850, 14, 80, 32, panelBackground, Color.White, footerPanel);
@@ -429,15 +431,15 @@ public sealed class MainForm : Form
 
     private async Task InitializeAsync()
     {
-        SetStatus("Carregando configuraÁıes e manifest...");
-        _lblAppVersion.Text = $"Vers„o do Atualizador: {Application.ProductVersion}";
+        SetStatus("Carregando configura√ß√µes e manifest...");
+        _lblAppVersion.Text = $"Vers√£o do Atualizador: {Application.ProductVersion}";
         AppendLog("Inicializando Data Smart Deploy Center...");
 
         try
         {
             _manifest = await _manifestService.LoadAsync(_config.ManifestUrl);
-            _lblManifestVersion.Text = $"Vers„o do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
-            AppendLog($"Manifest carregado: vers„o {_manifest.Versao}");
+            _lblManifestVersion.Text = $"Vers√£o do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
+            AppendLog($"Manifest carregado: vers√£o {_manifest.Versao}");
         }
         catch (Exception ex)
         {
@@ -492,9 +494,8 @@ public sealed class MainForm : Form
 
             module.LocalPath = _backupService.FindLocalExePath(module.Nome) ?? string.Empty;
             module.LocalVersion = string.IsNullOrWhiteSpace(module.LocalPath)
-                ? "N„o instalado"
+                ? "N√£o instalado"
                 : VersionService.GetFileVersion(module.LocalPath);
-
             module.Estado = DetermineModuleState(module);
             _modules.Add(module);
             var rowIndex = _gridModules.Rows.Add(false, module.Nome, module.Descricao, module.LocalVersion, module.VersaoDisponivel, module.TamanhoText, module.DataText, module.StatusText);
@@ -557,15 +558,15 @@ public sealed class MainForm : Form
         var updates = _modules.Count(m => m.Estado == ModuleUpdateState.UpdateAvailable);
         var history = _historyService.LoadHistory().LastOrDefault();
         var freeSpace = GetDriveFreeSpace(_dataDir);
-        var bancoStatus = _environmentOk ? "Pronto" : "AtenÁ„o";
+        var bancoStatus = _environmentOk ? "Pronto" : "Aten√ß√£o";
         var connectionStatus = _environmentOk ? "Online" : "Offline";
 
-        SetDashboardCard(0, installed.ToString(), "MÛdulos Instalados");
-        SetDashboardCard(1, updates.ToString(), "AtualizaÁıes DisponÌveis");
-        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhuma", "⁄ltima ImplantaÁ„o");
-        SetDashboardCard(3, freeSpace, "EspaÁo Livre");
+        SetDashboardCard(0, installed.ToString(), "M√≥dulos Instalados");
+        SetDashboardCard(1, updates.ToString(), "Atualiza√ß√µes Dispon√≠veis");
+        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhuma", "√öltima Implanta√ß√£o");
+        SetDashboardCard(3, freeSpace, "Espa√ßo Livre");
         SetDashboardCard(4, bancoStatus, "Status do Banco");
-        SetDashboardCard(5, connectionStatus, "Status da Conex„o");
+        SetDashboardCard(5, connectionStatus, "Status da Conex√£o");
     }
 
     private void SetDashboardCard(int index, string value, string label)
@@ -594,13 +595,13 @@ public sealed class MainForm : Form
         var selected = GetSelectedModules();
         if (selected.Count == 0)
         {
-            MessageBox.Show("Selecione pelo menos um mÛdulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Selecione pelo menos um m√≥dulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         if (!_environmentOk)
         {
-            MessageBox.Show("O ambiente n„o est· pronto para a atualizaÁ„o. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("O ambiente n√£o est√° pronto para a atualiza√ß√£o. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -627,7 +628,7 @@ public sealed class MainForm : Form
                 await DownloadModuleAsync(module, tempFile, i, selected.Count);
 
                 if (!ValidateDownloadedModule(tempFile, module))
-                    throw new Exception($"Falha na validaÁ„o de {module.Nome}.");
+                    throw new Exception($"Falha na valida√ß√£o de {module.Nome}.");
 
                 ReplaceModuleFile(tempFile, destination);
                 updatedFiles.Add(module.Nome);
@@ -653,16 +654,16 @@ public sealed class MainForm : Form
                 StatusBanco = bancoResult
             });
 
-            AppendLog("AtualizaÁ„o concluÌda com sucesso.");
+            AppendLog("Atualiza√ß√£o conclu√≠da com sucesso.");
             SetStatus("Processo finalizado com sucesso.");
-            MessageBox.Show($"AtualizaÁ„o concluÌda com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {elapsed:hh\:mm\:ss}\nVelocidade mÈdia: {speed}\nBackup: {session}\nLog: {_log.LogFile}", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Atualiza√ß√£o conclu√≠da com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {elapsed:hh\:mm\:ss}\nVelocidade m√©dia: {speed}\nBackup: {session}\nLog: {_log.LogFile}", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
             AppendLog($"Erro: {ex.Message}");
             _log.Error(ex.Message);
             _backupService.RestoreSession(session);
-            MessageBox.Show($"Falha na atualizaÁ„o.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Falha na atualiza√ß√£o.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
         {
@@ -696,7 +697,6 @@ public sealed class MainForm : Form
     {
         if (File.Exists(destinationPath))
             File.Delete(destinationPath);
-
         File.Move(sourcePath, destinationPath, true);
     }
 
@@ -734,7 +734,7 @@ public sealed class MainForm : Form
         }
         catch
         {
-            MessageBox.Show("N„o foi possÌvel abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("N√£o foi poss√≠vel abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 
@@ -756,3 +756,5 @@ public sealed class MainForm : Form
         return LoadImage(baseDir, "logo-datasmart_ext.png") ?? LoadImage(baseDir, "logo-datasmart.png");
     }
 }
+""";
+Path('MainForm.cs').write_text(content, encoding='utf-8')
