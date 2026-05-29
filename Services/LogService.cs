@@ -3,6 +3,7 @@
 public sealed class LogService
 {
     public string LogFile { get; }
+    public event Action<string>? OnLog;
 
     public LogService(string backupDir)
     {
@@ -16,9 +17,16 @@ public sealed class LogService
 
     private void Write(string type, string msg)
     {
+        var line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{type}] {msg}{Environment.NewLine}";
         try
         {
-            File.AppendAllText(LogFile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{type}] {msg}{Environment.NewLine}");
+            File.AppendAllText(LogFile, line);
+        }
+        catch { }
+
+        try
+        {
+            OnLog?.Invoke(line);
         }
         catch { }
     }

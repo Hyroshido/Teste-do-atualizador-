@@ -15,10 +15,10 @@ public sealed class BancoUpdaterService
 
     public string OpenAndClickCarregar(string dataDir)
     {
-        return OpenAndRun(dataDir, false);
+        return OpenAndRun(dataDir, false, false);
     }
 
-    public string OpenAndRun(string dataDir, bool processarArquivos)
+    public string OpenAndRun(string dataDir, bool processarArquivos, bool fecharAutomaticamente)
     {
         var exe = Path.Combine(dataDir, "Atualizador de Banco de dados.exe");
 
@@ -68,22 +68,38 @@ public sealed class BancoUpdaterService
             }
 
             _log.Info("Clique automático realizado no botão Carregar arquivos.");
+            var result = "Atualizador aberto e botão Carregar arquivos acionado.";
 
-            if (!processarArquivos)
-                return "Atualizador aberto e botão Carregar arquivos acionado.";
-
-            Thread.Sleep(1500);
-
-            var clickedProcessar = ClickButtonByText(process.MainWindowHandle, "Processar");
-
-            if (clickedProcessar)
+            if (processarArquivos)
             {
-                _log.Info("Clique automático realizado no botão Processar.");
-                return "Atualizador aberto, Carregar acionado e Processar acionado.";
+                Thread.Sleep(1500);
+                var clickedProcessar = ClickButtonByText(process.MainWindowHandle, "Processar");
+
+                if (clickedProcessar)
+                {
+                    _log.Info("Clique automático realizado no botão Processar.");
+                    result = "Atualizador aberto, Carregar acionado e Processar acionado.";
+                }
+                else
+                {
+                    _log.Warn("Botão Processar não encontrado.");
+                    result = "Atualizador aberto e Carregar acionado, mas o botão Processar não foi encontrado. Clique manualmente.";
+                }
             }
 
-            _log.Warn("Botão Processar não encontrado.");
-            return "Atualizador aberto e Carregar acionado, mas o botão Processar não foi encontrado. Clique manualmente.";
+            if (fecharAutomaticamente)
+            {
+                Thread.Sleep(1500);
+                ClickButtonByText(process.MainWindowHandle, "Fechar");
+                process.Refresh();
+                if (!process.HasExited)
+                {
+                    process.CloseMainWindow();
+                }
+                _log.Info("Tentativa automática de fechamento do atualizador de banco.");
+            }
+
+            return result;
         }
         catch (Exception ex)
         {

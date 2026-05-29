@@ -4,24 +4,44 @@ public sealed class BackupService
 {
     private readonly string _dataDir;
     private readonly string _exeDir;
-    private readonly string _backupDir;
+    private readonly string _backupRoot;
+    private readonly string _backupBanco;
+    private readonly string _backupExecutaveis;
+    private readonly string _backupLogs;
+    private readonly string _backupHistorico;
+    private readonly string _backupConfig;
     private readonly LogService _log;
 
     public BackupService(string dataDir, LogService log)
     {
         _dataDir = dataDir;
-        _exeDir = Path.Combine(dataDir, "EXE");
-        _backupDir = Path.Combine(dataDir, "Backup");
+        _exeDir = Path.Combine(_dataDir, "EXE");
+        _backupRoot = Path.Combine(_dataDir, "Backup");
+        _backupBanco = Path.Combine(_backupRoot, "Banco");
+        _backupExecutaveis = Path.Combine(_backupRoot, "Executaveis");
+        _backupLogs = Path.Combine(_backupRoot, "Logs");
+        _backupHistorico = Path.Combine(_backupRoot, "Historico");
+        _backupConfig = Path.Combine(_backupRoot, "Config");
         _log = log;
 
         Directory.CreateDirectory(_exeDir);
-        Directory.CreateDirectory(_backupDir);
+        Directory.CreateDirectory(_backupRoot);
+        Directory.CreateDirectory(_backupBanco);
+        Directory.CreateDirectory(_backupExecutaveis);
+        Directory.CreateDirectory(_backupLogs);
+        Directory.CreateDirectory(_backupHistorico);
+        Directory.CreateDirectory(_backupConfig);
     }
 
     public string CreateSessionBackup()
     {
-        var path = Path.Combine(_backupDir, $"Backup_{DateTime.Now:yyyyMMdd_HHmmss}");
+        var path = Path.Combine(_backupRoot, $"Backup_{DateTime.Now:yyyyMMdd_HHmmss}");
         Directory.CreateDirectory(path);
+        Directory.CreateDirectory(Path.Combine(path, "Banco"));
+        Directory.CreateDirectory(Path.Combine(path, "Executaveis"));
+        Directory.CreateDirectory(Path.Combine(path, "Logs"));
+        Directory.CreateDirectory(Path.Combine(path, "Historico"));
+        Directory.CreateDirectory(Path.Combine(path, "Config"));
         _log.Info($"Pasta de backup criada: {path}");
         return path;
     }
@@ -37,7 +57,7 @@ public sealed class BackupService
             return;
         }
 
-        var dest = Path.Combine(sessionPath, $"COMERCIAL_{DateTime.Now:yyyyMMdd}.DAT");
+        var dest = Path.Combine(sessionPath, "Banco", $"COMERCIAL_{DateTime.Now:yyyyMMdd_HHmmss}.DAT");
         File.Copy(db, dest, true);
         _log.Info($"Backup do COMERCIAL.DAT criado: {dest}");
     }
@@ -54,7 +74,7 @@ public sealed class BackupService
 
         var name = Path.GetFileNameWithoutExtension(exeName);
         var ext = Path.GetExtension(exeName);
-        var backup = Path.Combine(sessionPath, $"{name}_{DateTime.Now:yyyyMMdd}{ext}");
+        var backup = Path.Combine(sessionPath, "Executaveis", $"{name}_{DateTime.Now:yyyyMMdd_HHmmss}{ext}");
 
         File.Copy(origin, backup, true);
         _log.Info($"Backup criado: {backup}");
@@ -62,7 +82,7 @@ public sealed class BackupService
         return backup;
     }
 
-    private string? FindLocalExePath(string exeName)
+    public string? FindLocalExePath(string exeName)
     {
         var exePath = Path.Combine(_exeDir, exeName);
         if (File.Exists(exePath))
@@ -73,5 +93,24 @@ public sealed class BackupService
             return rootPath;
 
         return null;
+    }
+
+    public void RestoreSession(string sessionPath)
+    {
+        try
+        {
+            var executaveis = Directory.GetFiles(Path.Combine(sessionPath, "Executaveis"), "*.exe", SearchOption.TopDirectoryOnly);
+            foreach (var backupFile in executaveis)
+            {
+                var name = Path.GetFileName(backupFile);
+                var target = Path.Combine(_dataDir, name);
+                File.Copy(backupFile, target, true);
+                _log.Info($"Rollback: restaurado {name}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _log.Warn($"Falha ao restaurar backup de sessão: {ex.Message}");
+        }
     }
 }
