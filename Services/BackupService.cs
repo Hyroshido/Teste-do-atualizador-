@@ -3,14 +3,18 @@
 public sealed class BackupService
 {
     private readonly string _dataDir;
+    private readonly string _exeDir;
     private readonly string _backupDir;
     private readonly LogService _log;
 
     public BackupService(string dataDir, LogService log)
     {
         _dataDir = dataDir;
+        _exeDir = Path.Combine(dataDir, "EXE");
         _backupDir = Path.Combine(dataDir, "Backup");
         _log = log;
+
+        Directory.CreateDirectory(_exeDir);
         Directory.CreateDirectory(_backupDir);
     }
 
@@ -40,11 +44,11 @@ public sealed class BackupService
 
     public string? BackupExe(string exeName, string sessionPath)
     {
-        var origin = Path.Combine(_dataDir, exeName);
+        var origin = FindLocalExePath(exeName);
 
-        if (!File.Exists(origin))
+        if (origin == null)
         {
-            _log.Warn($"Arquivo local não encontrado para backup: {origin}");
+            _log.Warn($"Arquivo local não encontrado para backup: {exeName}");
             return null;
         }
 
@@ -56,5 +60,18 @@ public sealed class BackupService
         _log.Info($"Backup criado: {backup}");
 
         return backup;
+    }
+
+    private string? FindLocalExePath(string exeName)
+    {
+        var exePath = Path.Combine(_exeDir, exeName);
+        if (File.Exists(exePath))
+            return exePath;
+
+        var rootPath = Path.Combine(_dataDir, exeName);
+        if (File.Exists(rootPath))
+            return rootPath;
+
+        return null;
     }
 }

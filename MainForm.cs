@@ -7,6 +7,7 @@ public sealed class MainForm : Form
 {
     private readonly AppConfig _config;
     private readonly string _dataDir;
+    private readonly string _exeDir;
     private readonly string _backupDir;
     private readonly LogService _log;
     private readonly ManifestService _manifestService;
@@ -35,7 +36,10 @@ public sealed class MainForm : Form
     {
         _config = config;
         _dataDir = PathService.GetDataSmartPath();
+        _exeDir = Path.Combine(_dataDir, "EXE");
         _backupDir = Path.Combine(_dataDir, "Backup");
+
+        Directory.CreateDirectory(_exeDir);
         Directory.CreateDirectory(_backupDir);
 
         _log = new LogService(_backupDir);
@@ -354,8 +358,8 @@ public sealed class MainForm : Form
 
             foreach (var item in _manifest.Arquivos)
             {
-                var local = Path.Combine(_dataDir, item.Nome);
-                var status = File.Exists(local) ? "ENCONTRADO - será substituído com backup" : "NÃO INSTALADO - nova instalação";
+                var local = FindLocalModulePath(item.Nome);
+                var status = local != null ? $"ENCONTRADO em {(Path.GetDirectoryName(local)?.EndsWith("EXE", StringComparison.OrdinalIgnoreCase) == true ? "EXE" : "raiz")} - será substituído com backup" : "NÃO INSTALADO - nova instalação";
                 _list.Items.Add($"{item.Nome}  |  {item.Descricao}  |  {status}", false);
             }
 
@@ -428,7 +432,7 @@ public sealed class MainForm : Form
 
                 SetProgress((int)(((current - 1) / (double)total) * 100), $"Preparando ambiente para {item.Nome} ({current}/{total})...");
 
-                var finalPath = Path.Combine(_dataDir, item.Nome);
+                var finalPath = GetModuleDestinationPath(item.Nome);
                 var tempPath = finalPath + ".tmp";
 
                 SetProgress((int)(((current - 1) / (double)total) * 100) + 5, "Criando backup dos módulos...");
@@ -473,6 +477,24 @@ public sealed class MainForm : Form
             MessageBox.Show($"Falha na atualização.\n\nErro:\n{ex.Message}\n\nBackup:\n{session}\n\nLog:\n{_log.LogFile}", "Data Smart Enterprise", MessageBoxButtons.OK, MessageBoxIcon.Error);
             SetControls(true);
         }
+    }
+
+    private string GetModuleDestinationPath(string moduleName)
+    {
+        return Path.Combine(_exeDir, moduleName);
+    }
+
+    private string? FindLocalModulePath(string moduleName)
+    {
+        var exePath = Path.Combine(_exeDir, moduleName);
+        if (File.Exists(exePath))
+            return exePath;
+
+        var rootPath = Path.Combine(_dataDir, moduleName);
+        if (File.Exists(rootPath))
+            return rootPath;
+
+        return null;
     }
 
     private void SetControls(bool enabled)
