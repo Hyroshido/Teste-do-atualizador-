@@ -28,11 +28,11 @@ public sealed class ManifestService
             Versao = DateTime.Now.ToString("yyyy.MM.dd"),
             Arquivos = new List<ManifestItem>
             {
-                new() { Nome = "SmartNFe.exe",  Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartNFe.exe",  Descricao = "Módulo de NF-e: emissão, transmissão e gerenciamento de notas fiscais eletrônicas." },
-                new() { Nome = "SmartNFSe.exe", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartNFSe.exe", Descricao = "Módulo de NFS-e: emissão e integração de notas fiscais de serviço." },
-                new() { Nome = "SmartFood.exe", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartFood.exe", Descricao = "Módulo Food: restaurante, delivery e balcão." },
-                new() { Nome = "SmartCTE.exe",  Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartCTE.exe",  Descricao = "Módulo CT-e: emissão e manutenção de conhecimento de transporte." },
-                new() { Nome = "SPED.exe",      Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SPED.exe",      Descricao = "Módulo SPED: geração e manutenção de arquivos fiscais." }
+                new() { Nome = "SmartNFe.exe",  Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartNFe.exe",  Descricao = "Módulo de NF-e: emissão, transmissão e gerenciamento de notas fiscais eletrônicas." },
+                new() { Nome = "SmartNFSe.exe", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartNFSe.exe", Descricao = "Módulo de NFS-e: emissão e integração de notas fiscais de serviço." },
+                new() { Nome = "SmartFood.exe", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartFood.exe", Descricao = "Módulo Food: restaurante, delivery e balcão." },
+                new() { Nome = "SmartCTE.exe",  Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartCTE.exe",  Descricao = "Módulo CT-e: emissão e manutenção de conhecimento de transporte." },
+                new() { Nome = "SPED.exe",      Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SPED.exe",      Descricao = "Módulo SPED: geração e manutenção de arquivos fiscais." }
             }
         };
     }
