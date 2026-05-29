@@ -26,6 +26,8 @@ public sealed class MainForm : Form
     private readonly Button _btnLog = new();
     private readonly RadioButton _rbSomenteCarregar = new();
     private readonly RadioButton _rbCarregarProcessar = new();
+    private readonly PictureBox _logoPicture = new();
+    private readonly PictureBox _heroPicture = new();
 
     private ManifestFile _manifest = new();
 
@@ -50,133 +52,218 @@ public sealed class MainForm : Form
     private void BuildUi()
     {
         Text = "Data Smart Enterprise - Atualizador";
-        Width = 940;
+        Width = 960;
         Height = 820;
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
-        BackColor = Color.FromArgb(15, 23, 42);
+        BackColor = Color.FromArgb(12, 18, 32);
         Font = new Font("Segoe UI", 9);
 
         var blue = Color.FromArgb(56, 189, 248);
-        var panel = Color.FromArgb(30, 41, 59);
-        var gray = Color.FromArgb(148, 163, 184);
+        var cardBackground = Color.FromArgb(22, 30, 48);
+        var panelBackground = Color.FromArgb(18, 24, 38);
+        var textGray = Color.FromArgb(168, 178, 198);
 
-        var title = new Label
+        var imageDir = Path.Combine(AppContext.BaseDirectory, "Imagens");
+        var logoImage = LoadLogoImage(imageDir);
+        var heroImage = LoadImage(imageDir, "Marcos.png");
+
+        var headerPanel = new Panel
+        {
+            Left = 20,
+            Top = 20,
+            Width = 920,
+            Height = 170,
+            BackColor = Color.FromArgb(20, 28, 50)
+        };
+        Controls.Add(headerPanel);
+
+        if (logoImage is not null)
+        {
+            _logoPicture.Image = logoImage;
+            _logoPicture.Left = 20;
+            _logoPicture.Top = 20;
+            _logoPicture.Width = 72;
+            _logoPicture.Height = 72;
+            _logoPicture.SizeMode = PictureBoxSizeMode.Zoom;
+            headerPanel.Controls.Add(_logoPicture);
+        }
+
+        var headerLeft = logoImage is not null ? 110 : 20;
+        var headerTitle = new Label
         {
             Text = "DATA SMART ENTERPRISE",
-            ForeColor = blue,
-            Font = new Font("Segoe UI", 22, FontStyle.Bold),
-            AutoSize = true,
-            Left = 30,
-            Top = 25
-        };
-        Controls.Add(title);
-
-        var subtitle = new Label
-        {
-            Text = "Atualizador seguro com backup automático, download online e carregamento do atualizador de banco",
             ForeColor = Color.White,
+            Font = new Font("Segoe UI", 20, FontStyle.Bold),
             AutoSize = true,
-            Left = 32,
-            Top = 72
+            Left = headerLeft,
+            Top = 24
         };
-        Controls.Add(subtitle);
+        headerPanel.Controls.Add(headerTitle);
 
-        var dir = new Label
+        var headerSubtitle = new Label
+        {
+            Text = "Atualizador seguro com backup automático e deploy de módulos",
+            ForeColor = textGray,
+            Font = new Font("Segoe UI", 10, FontStyle.Regular),
+            AutoSize = true,
+            Left = headerLeft,
+            Top = 68
+        };
+        headerPanel.Controls.Add(headerSubtitle);
+
+        var headerDetail = new Label
         {
             Text = $"Diretório detectado: {_dataDir}",
-            ForeColor = gray,
+            ForeColor = Color.FromArgb(160, 170, 190),
+            Font = new Font("Segoe UI", 9, FontStyle.Regular),
             AutoSize = true,
-            Left = 32,
-            Top = 100
+            Left = headerLeft,
+            Top = 96
         };
-        Controls.Add(dir);
+        headerPanel.Controls.Add(headerDetail);
 
-        var aviso = new Panel
+        if (heroImage is not null)
         {
-            Left = 30,
-            Top = 130,
-            Width = 850,
-            Height = 82,
-            BackColor = Color.FromArgb(23, 32, 51)
+            _heroPicture.Image = heroImage;
+            _heroPicture.Left = 760;
+            _heroPicture.Top = 18;
+            _heroPicture.Width = 140;
+            _heroPicture.Height = 140;
+            _heroPicture.SizeMode = PictureBoxSizeMode.Zoom;
+            headerPanel.Controls.Add(_heroPicture);
+        }
+
+        var infoCard = new Panel
+        {
+            Left = 20,
+            Top = 202,
+            Width = 920,
+            Height = 80,
+            BackColor = cardBackground,
+            Padding = new Padding(20)
         };
-        Controls.Add(aviso);
+        Controls.Add(infoCard);
 
-        aviso.Controls.Add(new Label
+        infoCard.Controls.Add(new Label
         {
-            Text = "Processo: 1) cria backup do COMERCIAL.DAT, 2) cria backup dos executáveis selecionados, 3) baixa os arquivos novos, 4) substitui os módulos, 5) abre o Atualizador de Banco e clica apenas em Carregar arquivos.",
-            ForeColor = Color.White,
-            Left = 15,
-            Top = 15,
-            Width = 815,
-            Height = 55
+            Text = "Processo: 1) criar backup de COMERCIAL.DAT, 2) backup dos executáveis, 3) download dos módulos selecionados, 4) substituir arquivos e 5) abrir o atualizador de banco.",
+            ForeColor = textGray,
+            Font = new Font("Segoe UI", 9, FontStyle.Regular),
+            AutoSize = false,
+            Width = 860,
+            Height = 40,
+            Left = 0,
+            Top = 12
         });
 
-        _list.Left = 30;
-        _list.Top = 230;
-        _list.Width = 850;
-        _list.Height = 310;
-        _list.BackColor = panel;
+        var listCard = new Panel
+        {
+            Left = 20,
+            Top = 298,
+            Width = 920,
+            Height = 340,
+            BackColor = cardBackground,
+            Padding = new Padding(20)
+        };
+        Controls.Add(listCard);
+
+        listCard.Controls.Add(new Label
+        {
+            Text = "Módulos disponíveis",
+            ForeColor = blue,
+            Font = new Font("Segoe UI", 11, FontStyle.Bold),
+            AutoSize = true,
+            Left = 0,
+            Top = 0
+        });
+
+        _list.Left = 0;
+        _list.Top = 34;
+        _list.Width = 880;
+        _list.Height = 220;
+        _list.BackColor = panelBackground;
         _list.ForeColor = Color.White;
         _list.CheckOnClick = true;
-        _list.BorderStyle = BorderStyle.FixedSingle;
+        _list.BorderStyle = BorderStyle.None;
         _list.ItemCheck += (_, _) => BeginInvoke(new Action(UpdateSelectedCount));
-        Controls.Add(_list);
+        listCard.Controls.Add(_list);
 
         _lblSelected.Text = "Nenhum selecionado";
-        _lblSelected.ForeColor = gray;
-        _lblSelected.Left = 30;
-        _lblSelected.Top = 555;
-        _lblSelected.Width = 250;
-        Controls.Add(_lblSelected);
+        _lblSelected.ForeColor = textGray;
+        _lblSelected.Left = 0;
+        _lblSelected.Top = 265;
+        _lblSelected.Width = 300;
+        listCard.Controls.Add(_lblSelected);
+
+        ConfigureButton(_btnAll, "Marcar todos", 600, 260, 125, 34, panelBackground, Color.White, listCard);
+        ConfigureButton(_btnNone, "Desmarcar todos", 735, 260, 125, 34, panelBackground, Color.White, listCard);
+
+        var bottomCard = new Panel
+        {
+            Left = 20,
+            Top = 650,
+            Width = 920,
+            Height = 140,
+            BackColor = cardBackground,
+            Padding = new Padding(20)
+        };
+        Controls.Add(bottomCard);
+
+        bottomCard.Controls.Add(new Label
+        {
+            Text = "Atualizador de Banco",
+            ForeColor = blue,
+            Font = new Font("Segoe UI", 11, FontStyle.Bold),
+            AutoSize = true,
+            Left = 0,
+            Top = 0
+        });
 
         _rbSomenteCarregar.Text = "Somente carregar arquivos";
-        _rbSomenteCarregar.Left = 30;
-        _rbSomenteCarregar.Top = 590;
+        _rbSomenteCarregar.Left = 0;
+        _rbSomenteCarregar.Top = 30;
         _rbSomenteCarregar.Width = 260;
         _rbSomenteCarregar.ForeColor = Color.White;
         _rbSomenteCarregar.Checked = true;
-        Controls.Add(_rbSomenteCarregar);
+        bottomCard.Controls.Add(_rbSomenteCarregar);
 
         _rbCarregarProcessar.Text = "Carregar e processar arquivos";
-        _rbCarregarProcessar.Left = 310;
-        _rbCarregarProcessar.Top = 590;
+        _rbCarregarProcessar.Left = 300;
+        _rbCarregarProcessar.Top = 30;
         _rbCarregarProcessar.Width = 260;
         _rbCarregarProcessar.ForeColor = Color.White;
-        Controls.Add(_rbCarregarProcessar);
-
-        ConfigureButton(_btnAll, "Marcar todos", 610, 550, 120, 34, panel, Color.White);
-        ConfigureButton(_btnNone, "Desmarcar todos", 745, 550, 135, 34, panel, Color.White);
+        bottomCard.Controls.Add(_rbCarregarProcessar);
 
         _lblStatus.Text = "Carregando lista de módulos...";
         _lblStatus.ForeColor = Color.White;
-        _lblStatus.TextAlign = ContentAlignment.MiddleCenter;
-        _lblStatus.Left = 30;
-        _lblStatus.Top = 635;
-        _lblStatus.Width = 850;
-        _lblStatus.Height = 28;
-        Controls.Add(_lblStatus);
+        _lblStatus.TextAlign = ContentAlignment.MiddleLeft;
+        _lblStatus.Left = 0;
+        _lblStatus.Top = 70;
+        _lblStatus.Width = 580;
+        _lblStatus.Height = 24;
+        bottomCard.Controls.Add(_lblStatus);
 
-        _progress.Left = 30;
-        _progress.Top = 665;
-        _progress.Width = 740;
-        _progress.Height = 22;
+        _progress.Left = 0;
+        _progress.Top = 100;
+        _progress.Width = 700;
+        _progress.Height = 18;
         _progress.Minimum = 0;
         _progress.Maximum = 100;
-        Controls.Add(_progress);
+        bottomCard.Controls.Add(_progress);
 
         _lblPercent.Text = "0%";
         _lblPercent.ForeColor = blue;
-        _lblPercent.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-        _lblPercent.Left = 790;
-        _lblPercent.Top = 663;
-        _lblPercent.Width = 90;
-        Controls.Add(_lblPercent);
+        _lblPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+        _lblPercent.Left = 710;
+        _lblPercent.Top = 98;
+        _lblPercent.Width = 70;
+        bottomCard.Controls.Add(_lblPercent);
 
-        ConfigureButton(_btnLog, "Ver Log", 525, 700, 100, 38, panel, Color.White);
-        ConfigureButton(_btnClose, "Fechar", 640, 700, 100, 38, panel, Color.White);
-        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 755, 700, 125, 38, blue, Color.FromArgb(15, 23, 42));
+        ConfigureButton(_btnLog, "Ver Log", 600, 70, 100, 32, panelBackground, Color.White, bottomCard);
+        ConfigureButton(_btnClose, "Fechar", 710, 70, 100, 32, panelBackground, Color.White, bottomCard);
+        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 600, 102, 220, 32, blue, Color.FromArgb(15, 23, 42), bottomCard);
 
         _btnUpdate.Enabled = false;
 
@@ -205,8 +292,9 @@ public sealed class MainForm : Form
         _btnUpdate.Click += async (_, _) => await RunUpdateAsync();
     }
 
-    private void ConfigureButton(Button btn, string text, int left, int top, int width, int height, Color back, Color fore)
+    private void ConfigureButton(Button btn, string text, int left, int top, int width, int height, Color back, Color fore, Control? parent = null)
     {
+        var target = parent?.Controls ?? Controls;
         btn.Text = text;
         btn.Left = left;
         btn.Top = top;
@@ -216,7 +304,45 @@ public sealed class MainForm : Form
         btn.ForeColor = fore;
         btn.FlatStyle = FlatStyle.Flat;
         btn.FlatAppearance.BorderColor = Color.FromArgb(56, 189, 248);
-        Controls.Add(btn);
+        btn.FlatAppearance.BorderSize = 1;
+        var originalBack = back;
+
+        btn.MouseEnter += (_, _) =>
+        {
+            if (btn.Enabled)
+                btn.BackColor = ControlPaint.Light(originalBack);
+        };
+
+        btn.MouseLeave += (_, _) =>
+        {
+            btn.BackColor = btn.Enabled ? originalBack : Color.FromArgb(80, 86, 102);
+        };
+
+        btn.EnabledChanged += (_, _) =>
+        {
+            btn.BackColor = btn.Enabled ? originalBack : Color.FromArgb(80, 86, 102);
+        };
+
+        target.Add(btn);
+    }
+
+    private static Image? LoadImage(string baseDir, string fileName)
+    {
+        try
+        {
+            var path = Path.Combine(baseDir, fileName);
+            return File.Exists(path) ? Image.FromFile(path) : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static Image? LoadLogoImage(string baseDir)
+    {
+        return LoadImage(baseDir, "logo-datasmart_ext.png")
+            ?? LoadImage(baseDir, "logo-datasmart.png");
     }
 
     private async Task LoadManifestAsync()
@@ -288,7 +414,10 @@ public sealed class MainForm : Form
 
         try
         {
+            SetProgress(5, "Preparando ambiente...");
             _backupService.BackupDatabase(session);
+
+            SetProgress(15, "Criando backup do banco...");
 
             int total = selected.Count;
             int current = 0;
@@ -297,34 +426,38 @@ public sealed class MainForm : Form
             {
                 current++;
 
-                SetProgress((int)(((current - 1) / (double)total) * 100), $"Preparando {item.Nome} ({current} de {total})...");
+                SetProgress((int)(((current - 1) / (double)total) * 100), $"Preparando ambiente para {item.Nome} ({current}/{total})...");
 
                 var finalPath = Path.Combine(_dataDir, item.Nome);
                 var tempPath = finalPath + ".tmp";
 
+                SetProgress((int)(((current - 1) / (double)total) * 100) + 5, "Criando backup dos módulos...");
                 _backupService.BackupExe(item.Nome, session);
 
                 var downloadProgress = new Progress<int>(p =>
                 {
                     var totalPercent = (int)((((current - 1) / (double)total) * 100) + (p / (double)total));
-                    SetProgress(totalPercent, $"Baixando {item.Nome}... {p}% | Total {totalPercent}%");
+                    SetProgress(totalPercent, $"Baixando arquivo {item.Nome}... {p}% | Total {totalPercent}%");
                 });
 
                 await _downloadService.DownloadAsync(item.Url, tempPath, downloadProgress);
 
                 if (File.Exists(finalPath))
+                {
+                    SetProgress((int)(((current - 1) / (double)total) * 100) + 80, $"Substituindo arquivo {item.Nome}...");
                     File.Delete(finalPath);
+                }
 
                 File.Move(tempPath, finalPath, true);
 
                 _log.Info($"Arquivo atualizado: {finalPath}");
             }
 
+            SetProgress(95, "Abrindo atualizador de banco...");
             var processar = _rbCarregarProcessar.Checked;
-            SetProgress(98, processar ? "Abrindo atualizador de banco, carregando e processando arquivos..." : "Abrindo atualizador de banco e clicando em Carregar arquivos...");
             var bancoResult = _bancoUpdaterService.OpenAndRun(_dataDir, processar);
 
-            SetProgress(100, "Atualização concluída com sucesso.");
+            SetProgress(100, "Processo finalizado com sucesso.");
 
             MessageBox.Show(
                 $"Atualização concluída com sucesso.\n\nBackup:\n{session}\n\nAtualizador de banco:\n{bancoResult}\n\nLog:\n{_log.LogFile}",

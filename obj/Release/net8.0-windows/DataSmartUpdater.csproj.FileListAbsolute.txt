@@ -13,3 +13,7 @@ C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-window
 C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.pdb
 C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.genruntimeconfig.cache
 C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\ref\DataSmartUpdater.dll
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\Imagens\logo-datasmart-new.svg
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\Imagens\logo-datasmart.svg
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\Imagens\logo-datasmart_ext.png
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\Imagens\Marcos.png
