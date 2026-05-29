@@ -36,7 +36,8 @@ public sealed class HistoryService
                 return Array.Empty<UpdateHistoryEntry>();
 
             var json = File.ReadAllText(_historyPath);
-            return JsonSerializer.Deserialize<List<UpdateHistoryEntry>>(json, _options) ?? Array.Empty<UpdateHistoryEntry>();
+            var entries = JsonSerializer.Deserialize<List<UpdateHistoryEntry>>(json, _options);
+            return entries ?? Array.Empty<UpdateHistoryEntry>();
         }
         catch
         {
