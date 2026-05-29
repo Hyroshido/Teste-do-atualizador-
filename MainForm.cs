@@ -24,6 +24,8 @@ public sealed class MainForm : Form
     private readonly Button _btnAll = new();
     private readonly Button _btnNone = new();
     private readonly Button _btnLog = new();
+    private readonly RadioButton _rbSomenteCarregar = new();
+    private readonly RadioButton _rbCarregarProcessar = new();
 
     private ManifestFile _manifest = new();
 
@@ -49,7 +51,7 @@ public sealed class MainForm : Form
     {
         Text = "Data Smart Enterprise - Atualizador";
         Width = 940;
-        Height = 760;
+        Height = 820;
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
@@ -129,6 +131,21 @@ public sealed class MainForm : Form
         _lblSelected.Width = 250;
         Controls.Add(_lblSelected);
 
+        _rbSomenteCarregar.Text = "Somente carregar arquivos";
+        _rbSomenteCarregar.Left = 30;
+        _rbSomenteCarregar.Top = 590;
+        _rbSomenteCarregar.Width = 260;
+        _rbSomenteCarregar.ForeColor = Color.White;
+        _rbSomenteCarregar.Checked = true;
+        Controls.Add(_rbSomenteCarregar);
+
+        _rbCarregarProcessar.Text = "Carregar e processar arquivos";
+        _rbCarregarProcessar.Left = 310;
+        _rbCarregarProcessar.Top = 590;
+        _rbCarregarProcessar.Width = 260;
+        _rbCarregarProcessar.ForeColor = Color.White;
+        Controls.Add(_rbCarregarProcessar);
+
         ConfigureButton(_btnAll, "Marcar todos", 610, 550, 120, 34, panel, Color.White);
         ConfigureButton(_btnNone, "Desmarcar todos", 745, 550, 135, 34, panel, Color.White);
 
@@ -136,13 +153,13 @@ public sealed class MainForm : Form
         _lblStatus.ForeColor = Color.White;
         _lblStatus.TextAlign = ContentAlignment.MiddleCenter;
         _lblStatus.Left = 30;
-        _lblStatus.Top = 595;
+        _lblStatus.Top = 635;
         _lblStatus.Width = 850;
         _lblStatus.Height = 28;
         Controls.Add(_lblStatus);
 
         _progress.Left = 30;
-        _progress.Top = 630;
+        _progress.Top = 665;
         _progress.Width = 740;
         _progress.Height = 22;
         _progress.Minimum = 0;
@@ -153,13 +170,13 @@ public sealed class MainForm : Form
         _lblPercent.ForeColor = blue;
         _lblPercent.Font = new Font("Segoe UI", 11, FontStyle.Bold);
         _lblPercent.Left = 790;
-        _lblPercent.Top = 628;
+        _lblPercent.Top = 663;
         _lblPercent.Width = 90;
         Controls.Add(_lblPercent);
 
-        ConfigureButton(_btnLog, "Ver Log", 525, 675, 100, 38, panel, Color.White);
-        ConfigureButton(_btnClose, "Fechar", 640, 675, 100, 38, panel, Color.White);
-        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 755, 675, 125, 38, blue, Color.FromArgb(15, 23, 42));
+        ConfigureButton(_btnLog, "Ver Log", 525, 700, 100, 38, panel, Color.White);
+        ConfigureButton(_btnClose, "Fechar", 640, 700, 100, 38, panel, Color.White);
+        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 755, 700, 125, 38, blue, Color.FromArgb(15, 23, 42));
 
         _btnUpdate.Enabled = false;
 
@@ -303,8 +320,9 @@ public sealed class MainForm : Form
                 _log.Info($"Arquivo atualizado: {finalPath}");
             }
 
-            SetProgress(98, "Abrindo atualizador de banco e clicando em Carregar arquivos...");
-            var bancoResult = _bancoUpdaterService.OpenAndClickCarregar(_dataDir);
+            var processar = _rbCarregarProcessar.Checked;
+            SetProgress(98, processar ? "Abrindo atualizador de banco, carregando e processando arquivos..." : "Abrindo atualizador de banco e clicando em Carregar arquivos...");
+            var bancoResult = _bancoUpdaterService.OpenAndRun(_dataDir, processar);
 
             SetProgress(100, "Atualização concluída com sucesso.");
 

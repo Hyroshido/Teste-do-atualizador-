@@ -15,6 +15,11 @@ public sealed class BancoUpdaterService
 
     public string OpenAndClickCarregar(string dataDir)
     {
+        return OpenAndRun(dataDir, false);
+    }
+
+    public string OpenAndRun(string dataDir, bool processarArquivos)
+    {
         var exe = Path.Combine(dataDir, "Atualizador de Banco de dados.exe");
 
         if (!File.Exists(exe))
@@ -56,14 +61,29 @@ public sealed class BancoUpdaterService
 
             var clicked = ClickButtonByText(process.MainWindowHandle, "Carregar");
 
-            if (clicked)
+            if (!clicked)
             {
-                _log.Info("Clique automático realizado no botão Carregar arquivos.");
-                return "Atualizador aberto e botão Carregar arquivos acionado.";
+                _log.Warn("Botão Carregar arquivos não encontrado.");
+                return "Atualizador aberto, mas o botão Carregar arquivos não foi encontrado. Clique manualmente.";
             }
 
-            _log.Warn("Botão Carregar arquivos não encontrado.");
-            return "Atualizador aberto, mas o botão Carregar arquivos não foi encontrado. Clique manualmente.";
+            _log.Info("Clique automático realizado no botão Carregar arquivos.");
+
+            if (!processarArquivos)
+                return "Atualizador aberto e botão Carregar arquivos acionado.";
+
+            Thread.Sleep(1500);
+
+            var clickedProcessar = ClickButtonByText(process.MainWindowHandle, "Processar");
+
+            if (clickedProcessar)
+            {
+                _log.Info("Clique automático realizado no botão Processar.");
+                return "Atualizador aberto, Carregar acionado e Processar acionado.";
+            }
+
+            _log.Warn("Botão Processar não encontrado.");
+            return "Atualizador aberto e Carregar acionado, mas o botão Processar não foi encontrado. Clique manualmente.";
         }
         catch (Exception ex)
         {
