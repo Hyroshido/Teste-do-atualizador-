@@ -1,3 +1,4 @@
+using DataSmartUpdater.Models;
 using System.Net.Http.Headers;
 
 namespace DataSmartUpdater.Services;

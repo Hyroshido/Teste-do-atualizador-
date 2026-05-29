@@ -1,0 +1,5 @@
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.AssemblyInfoInputs.cache
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.AssemblyInfo.cs
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.csproj.CoreCompileInputs.cache
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.sourcelink.json

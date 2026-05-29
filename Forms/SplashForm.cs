@@ -6,7 +6,7 @@ namespace DataSmartUpdater;
 public sealed class SplashForm : Form
 {
     private readonly Label _statusLabel = new();
-    private readonly Timer _timer = new();
+    private readonly System.Windows.Forms.Timer _timer = new();
     private readonly List<string> _messages = new()
     {
         "Inicializando ambiente...",
