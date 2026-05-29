@@ -1,4 +1,4 @@
-using DataSmartUpdater.Services;
+﻿using DataSmartUpdater.Services;
 
 namespace DataSmartUpdater;
 
@@ -10,8 +10,6 @@ internal static class Program
         ApplicationConfiguration.Initialize();
 
         var config = AppConfig.Load();
-        using var form = new MainForm(config);
-
-        Application.Run(form);
+        Application.Run(new MainForm(config));
     }
 }

@@ -1,0 +1,15 @@
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.AssemblyInfoInputs.cache
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.AssemblyInfo.cs
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.csproj.CoreCompileInputs.cache
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.sourcelink.json
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\DataSmartUpdater.exe
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\DataSmartUpdater.deps.json
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\DataSmartUpdater.runtimeconfig.json
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\DataSmartUpdater.dll
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\DataSmartUpdater.pdb
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.dll
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\refint\DataSmartUpdater.dll
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.pdb
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\DataSmartUpdater.genruntimeconfig.cache
+C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Release\net8.0-windows\ref\DataSmartUpdater.dll

@@ -1,4 +1,4 @@
-using DataSmartUpdater.Models;
+﻿using DataSmartUpdater.Models;
 using DataSmartUpdater.Services;
 
 namespace DataSmartUpdater;
@@ -6,395 +6,340 @@ namespace DataSmartUpdater;
 public sealed class MainForm : Form
 {
     private readonly AppConfig _config;
-    private readonly string _installDirectory;
-    private readonly string _backupDirectory;
+    private readonly string _dataDir;
+    private readonly string _backupDir;
     private readonly LogService _log;
     private readonly ManifestService _manifestService;
+    private readonly DownloadService _downloadService;
+    private readonly BackupService _backupService;
+    private readonly BancoUpdaterService _bancoUpdaterService;
 
-    private readonly Label _titleLabel = new();
-    private readonly Label _subtitleLabel = new();
-    private readonly Label _pathLabel = new();
-    private readonly Label _infoLabel = new();
-    private readonly CheckedListBox _moduleList = new();
-    private readonly Label _selectedCountLabel = new();
-    private readonly Label _statusLabel = new();
-    private readonly ProgressBar _progressBar = new();
-    private readonly Label _percentLabel = new();
-    private readonly Button _selectAllButton = new();
-    private readonly Button _unselectAllButton = new();
-    private readonly Button _logButton = new();
-    private readonly Button _closeButton = new();
-    private readonly Button _updateButton = new();
+    private readonly CheckedListBox _list = new();
+    private readonly Label _lblStatus = new();
+    private readonly Label _lblPercent = new();
+    private readonly Label _lblSelected = new();
+    private readonly ProgressBar _progress = new();
+    private readonly Button _btnUpdate = new();
+    private readonly Button _btnClose = new();
+    private readonly Button _btnAll = new();
+    private readonly Button _btnNone = new();
+    private readonly Button _btnLog = new();
 
-    private readonly List<ManifestFile> _files = [];
-    private string _currentLogPath = string.Empty;
+    private ManifestFile _manifest = new();
 
     public MainForm(AppConfig config)
     {
         _config = config;
-        _installDirectory = InstallPathService.ResolveInstallPath(config.DefaultInstallPath);
-        _backupDirectory = Path.Combine(_installDirectory, "Backup");
-        Directory.CreateDirectory(_backupDirectory);
+        _dataDir = PathService.GetDataSmartPath();
+        _backupDir = Path.Combine(_dataDir, "Backup");
+        Directory.CreateDirectory(_backupDir);
 
-        _log = new LogService(_backupDirectory);
-        _currentLogPath = _log.LogFilePath;
-        _manifestService = new ManifestService(config.DownloadTimeoutSeconds);
+        _log = new LogService(_backupDir);
+        _manifestService = new ManifestService();
+        _downloadService = new DownloadService(_log);
+        _backupService = new BackupService(_dataDir, _log);
+        _bancoUpdaterService = new BancoUpdaterService(_log);
 
-        ConfigureForm();
-        BuildInterface();
+        BuildUi();
 
         Shown += async (_, _) => await LoadManifestAsync();
     }
 
-    private void ConfigureForm()
+    private void BuildUi()
     {
         Text = "Data Smart Enterprise - Atualizador";
-        Width = 960;
+        Width = 940;
         Height = 760;
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         BackColor = Color.FromArgb(15, 23, 42);
         Font = new Font("Segoe UI", 9);
-    }
 
-    private void BuildInterface()
-    {
         var blue = Color.FromArgb(56, 189, 248);
         var panel = Color.FromArgb(30, 41, 59);
         var gray = Color.FromArgb(148, 163, 184);
 
-        _titleLabel.Text = "DATA SMART ENTERPRISE";
-        _titleLabel.ForeColor = blue;
-        _titleLabel.Font = new Font("Segoe UI", 22, FontStyle.Bold);
-        _titleLabel.AutoSize = true;
-        _titleLabel.Left = 30;
-        _titleLabel.Top = 25;
-        Controls.Add(_titleLabel);
+        var title = new Label
+        {
+            Text = "DATA SMART ENTERPRISE",
+            ForeColor = blue,
+            Font = new Font("Segoe UI", 22, FontStyle.Bold),
+            AutoSize = true,
+            Left = 30,
+            Top = 25
+        };
+        Controls.Add(title);
 
-        _subtitleLabel.Text = "Atualizador seguro com backup automático, restauração e carregamento do atualizador de banco";
-        _subtitleLabel.ForeColor = Color.White;
-        _subtitleLabel.AutoSize = true;
-        _subtitleLabel.Left = 32;
-        _subtitleLabel.Top = 72;
-        Controls.Add(_subtitleLabel);
+        var subtitle = new Label
+        {
+            Text = "Atualizador seguro com backup automático, download online e carregamento do atualizador de banco",
+            ForeColor = Color.White,
+            AutoSize = true,
+            Left = 32,
+            Top = 72
+        };
+        Controls.Add(subtitle);
 
-        _pathLabel.Text = $"Diretório detectado: {_installDirectory}";
-        _pathLabel.ForeColor = gray;
-        _pathLabel.AutoSize = true;
-        _pathLabel.Left = 32;
-        _pathLabel.Top = 98;
-        Controls.Add(_pathLabel);
+        var dir = new Label
+        {
+            Text = $"Diretório detectado: {_dataDir}",
+            ForeColor = gray,
+            AutoSize = true,
+            Left = 32,
+            Top = 100
+        };
+        Controls.Add(dir);
 
-        var warningPanel = new Panel
+        var aviso = new Panel
         {
             Left = 30,
             Top = 130,
-            Width = 880,
+            Width = 850,
             Height = 82,
             BackColor = Color.FromArgb(23, 32, 51)
         };
-        Controls.Add(warningPanel);
+        Controls.Add(aviso);
 
-        _infoLabel.Text =
-            "Processo: 1) baixa a lista online do GitHub, 2) cria backup do COMERCIAL.DAT, " +
-            "3) cria backup dos executáveis selecionados, 4) baixa os arquivos novos, " +
-            "5) substitui os módulos, 6) abre o Atualizador de Banco e clica apenas em Carregar arquivos.";
-        _infoLabel.ForeColor = Color.White;
-        _infoLabel.Left = 15;
-        _infoLabel.Top = 14;
-        _infoLabel.Width = 850;
-        _infoLabel.Height = 60;
-        warningPanel.Controls.Add(_infoLabel);
-
-        _moduleList.Left = 30;
-        _moduleList.Top = 230;
-        _moduleList.Width = 880;
-        _moduleList.Height = 310;
-        _moduleList.BackColor = panel;
-        _moduleList.ForeColor = Color.White;
-        _moduleList.CheckOnClick = true;
-        _moduleList.BorderStyle = BorderStyle.FixedSingle;
-        _moduleList.Font = new Font("Segoe UI", 9);
-        _moduleList.ItemCheck += (_, _) => BeginInvoke(UpdateSelectedCount);
-        Controls.Add(_moduleList);
-
-        _selectedCountLabel.Text = "Nenhum selecionado";
-        _selectedCountLabel.ForeColor = gray;
-        _selectedCountLabel.Left = 30;
-        _selectedCountLabel.Top = 552;
-        _selectedCountLabel.Width = 260;
-        Controls.Add(_selectedCountLabel);
-
-        ConfigureSecondaryButton(_selectAllButton, "Marcar todos", 650, 546, 125);
-        _selectAllButton.Click += (_, _) =>
+        aviso.Controls.Add(new Label
         {
-            for (var i = 0; i < _moduleList.Items.Count; i++)
-            {
-                _moduleList.SetItemChecked(i, true);
-            }
+            Text = "Processo: 1) cria backup do COMERCIAL.DAT, 2) cria backup dos executáveis selecionados, 3) baixa os arquivos novos, 4) substitui os módulos, 5) abre o Atualizador de Banco e clica apenas em Carregar arquivos.",
+            ForeColor = Color.White,
+            Left = 15,
+            Top = 15,
+            Width = 815,
+            Height = 55
+        });
 
+        _list.Left = 30;
+        _list.Top = 230;
+        _list.Width = 850;
+        _list.Height = 310;
+        _list.BackColor = panel;
+        _list.ForeColor = Color.White;
+        _list.CheckOnClick = true;
+        _list.BorderStyle = BorderStyle.FixedSingle;
+        _list.ItemCheck += (_, _) => BeginInvoke(new Action(UpdateSelectedCount));
+        Controls.Add(_list);
+
+        _lblSelected.Text = "Nenhum selecionado";
+        _lblSelected.ForeColor = gray;
+        _lblSelected.Left = 30;
+        _lblSelected.Top = 555;
+        _lblSelected.Width = 250;
+        Controls.Add(_lblSelected);
+
+        ConfigureButton(_btnAll, "Marcar todos", 610, 550, 120, 34, panel, Color.White);
+        ConfigureButton(_btnNone, "Desmarcar todos", 745, 550, 135, 34, panel, Color.White);
+
+        _lblStatus.Text = "Carregando lista de módulos...";
+        _lblStatus.ForeColor = Color.White;
+        _lblStatus.TextAlign = ContentAlignment.MiddleCenter;
+        _lblStatus.Left = 30;
+        _lblStatus.Top = 595;
+        _lblStatus.Width = 850;
+        _lblStatus.Height = 28;
+        Controls.Add(_lblStatus);
+
+        _progress.Left = 30;
+        _progress.Top = 630;
+        _progress.Width = 740;
+        _progress.Height = 22;
+        _progress.Minimum = 0;
+        _progress.Maximum = 100;
+        Controls.Add(_progress);
+
+        _lblPercent.Text = "0%";
+        _lblPercent.ForeColor = blue;
+        _lblPercent.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+        _lblPercent.Left = 790;
+        _lblPercent.Top = 628;
+        _lblPercent.Width = 90;
+        Controls.Add(_lblPercent);
+
+        ConfigureButton(_btnLog, "Ver Log", 525, 675, 100, 38, panel, Color.White);
+        ConfigureButton(_btnClose, "Fechar", 640, 675, 100, 38, panel, Color.White);
+        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 755, 675, 125, 38, blue, Color.FromArgb(15, 23, 42));
+
+        _btnUpdate.Enabled = false;
+
+        _btnAll.Click += (_, _) =>
+        {
+            for (int i = 0; i < _list.Items.Count; i++) _list.SetItemChecked(i, true);
             UpdateSelectedCount();
         };
-        Controls.Add(_selectAllButton);
 
-        ConfigureSecondaryButton(_unselectAllButton, "Desmarcar todos", 785, 546, 125);
-        _unselectAllButton.Click += (_, _) =>
+        _btnNone.Click += (_, _) =>
         {
-            for (var i = 0; i < _moduleList.Items.Count; i++)
-            {
-                _moduleList.SetItemChecked(i, false);
-            }
-
+            for (int i = 0; i < _list.Items.Count; i++) _list.SetItemChecked(i, false);
             UpdateSelectedCount();
         };
-        Controls.Add(_unselectAllButton);
 
-        _statusLabel.Text = "Carregando lista online de módulos...";
-        _statusLabel.ForeColor = Color.White;
-        _statusLabel.TextAlign = ContentAlignment.MiddleCenter;
-        _statusLabel.Left = 30;
-        _statusLabel.Top = 592;
-        _statusLabel.Width = 880;
-        _statusLabel.Height = 28;
-        Controls.Add(_statusLabel);
+        _btnClose.Click += (_, _) => Close();
 
-        _progressBar.Left = 30;
-        _progressBar.Top = 628;
-        _progressBar.Width = 760;
-        _progressBar.Height = 22;
-        _progressBar.Minimum = 0;
-        _progressBar.Maximum = 100;
-        _progressBar.Value = 0;
-        Controls.Add(_progressBar);
-
-        _percentLabel.Text = "0%";
-        _percentLabel.ForeColor = blue;
-        _percentLabel.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-        _percentLabel.Left = 810;
-        _percentLabel.Top = 626;
-        _percentLabel.Width = 100;
-        _percentLabel.Height = 25;
-        Controls.Add(_percentLabel);
-
-        ConfigureSecondaryButton(_logButton, "Ver Log", 555, 672, 105);
-        _logButton.Click += (_, _) =>
+        _btnLog.Click += (_, _) =>
         {
-            if (File.Exists(_currentLogPath))
-            {
-                System.Diagnostics.Process.Start("notepad.exe", _currentLogPath);
-            }
+            if (File.Exists(_log.LogFile))
+                System.Diagnostics.Process.Start("notepad.exe", _log.LogFile);
             else
-            {
-                MessageBox.Show("Nenhum log gerado ainda.", "Data Smart Enterprise");
-            }
+                MessageBox.Show("Nenhum log foi gerado ainda.", "Data Smart Enterprise");
         };
-        Controls.Add(_logButton);
 
-        ConfigureSecondaryButton(_closeButton, "Fechar", 675, 672, 105);
-        _closeButton.Click += (_, _) => Close();
-        Controls.Add(_closeButton);
-
-        _updateButton.Text = "IMPLANTAR AGORA";
-        _updateButton.Left = 795;
-        _updateButton.Top = 672;
-        _updateButton.Width = 115;
-        _updateButton.Height = 38;
-        _updateButton.Enabled = false;
-        _updateButton.BackColor = blue;
-        _updateButton.ForeColor = Color.FromArgb(15, 23, 42);
-        _updateButton.FlatStyle = FlatStyle.Flat;
-        _updateButton.FlatAppearance.BorderColor = blue;
-        _updateButton.Click += async (_, _) => await ExecuteUpdateAsync();
-        Controls.Add(_updateButton);
+        _btnUpdate.Click += async (_, _) => await RunUpdateAsync();
     }
 
-    private static void ConfigureSecondaryButton(Button button, string text, int left, int top, int width)
+    private void ConfigureButton(Button btn, string text, int left, int top, int width, int height, Color back, Color fore)
     {
-        button.Text = text;
-        button.Left = left;
-        button.Top = top;
-        button.Width = width;
-        button.Height = 38;
-        button.BackColor = Color.FromArgb(30, 41, 59);
-        button.ForeColor = Color.White;
-        button.FlatStyle = FlatStyle.Flat;
-        button.FlatAppearance.BorderColor = Color.FromArgb(56, 189, 248);
+        btn.Text = text;
+        btn.Left = left;
+        btn.Top = top;
+        btn.Width = width;
+        btn.Height = height;
+        btn.BackColor = back;
+        btn.ForeColor = fore;
+        btn.FlatStyle = FlatStyle.Flat;
+        btn.FlatAppearance.BorderColor = Color.FromArgb(56, 189, 248);
+        Controls.Add(btn);
     }
 
     private async Task LoadManifestAsync()
     {
         try
         {
-            SetStatus(0, "Baixando manifest.json do GitHub...");
+            _manifest = await _manifestService.LoadAsync(_config.ManifestUrl);
+            _list.Items.Clear();
 
-            var manifest = await _manifestService.LoadAsync(
-                _config.ManifestUrl,
-                CancellationToken.None);
-
-            _files.Clear();
-            _moduleList.Items.Clear();
-
-            foreach (var file in manifest.Files)
+            foreach (var item in _manifest.Arquivos)
             {
-                var localPath = Path.Combine(_installDirectory, file.Name);
-                file.LocalStatus = File.Exists(localPath)
-                    ? "ENCONTRADO - será substituído com backup"
-                    : "NÃO INSTALADO - nova instalação";
-
-                _files.Add(file);
-                _moduleList.Items.Add(file, false);
+                var local = Path.Combine(_dataDir, item.Nome);
+                var status = File.Exists(local) ? "ENCONTRADO - será substituído com backup" : "NÃO INSTALADO - nova instalação";
+                _list.Items.Add($"{item.Nome}  |  {item.Descricao}  |  {status}", false);
             }
 
-            SetStatus(0, $"Lista carregada com sucesso. Versão do pacote: {manifest.Version}");
-            _log.Info($"Manifest carregado. Versão: {manifest.Version}");
+            _lblStatus.Text = "Selecione os módulos que deseja atualizar.";
         }
         catch (Exception ex)
         {
-            SetStatus(0, "Falha ao carregar manifest online. Usando lista local padrão.");
-
-            _log.Warning($"Falha ao carregar manifest: {ex.Message}");
-
-            var fallback = new List<ManifestFile>
-            {
-                new() { Name = "SmartNFe.exe", Description = "Módulo de NF-e", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartNFe.exe" },
-                new() { Name = "SmartNFSe.exe", Description = "Módulo de NFS-e", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartNFSe.exe" },
-                new() { Name = "SmartFood.exe", Description = "Módulo Food", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartFood.exe" },
-                new() { Name = "SmartCTE.exe", Description = "Módulo CT-e", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SmartCTE.exe" },
-                new() { Name = "SPED.exe", Description = "Módulo SPED", Url = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/SPED.exe" }
-            };
-
-            _files.Clear();
-            _moduleList.Items.Clear();
-
-            foreach (var file in fallback)
-            {
-                var localPath = Path.Combine(_installDirectory, file.Name);
-                file.LocalStatus = File.Exists(localPath)
-                    ? "ENCONTRADO - será substituído com backup"
-                    : "NÃO INSTALADO - nova instalação";
-
-                _files.Add(file);
-                _moduleList.Items.Add(file, false);
-            }
+            MessageBox.Show($"Falha ao carregar manifest.json.\n\n{ex.Message}", "Data Smart Enterprise", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
     private void UpdateSelectedCount()
     {
-        var count = _moduleList.CheckedItems.Count;
-
-        _selectedCountLabel.Text = count switch
-        {
-            0 => "Nenhum selecionado",
-            1 => "1 selecionado",
-            _ => $"{count} selecionados"
-        };
-
-        _updateButton.Enabled = count > 0;
+        var count = _list.CheckedItems.Count;
+        _lblSelected.Text = count == 0 ? "Nenhum selecionado" : count == 1 ? "1 selecionado" : $"{count} selecionados";
+        _btnUpdate.Enabled = count > 0;
     }
 
-    private async Task ExecuteUpdateAsync()
+    private List<ManifestItem> GetSelectedItems()
     {
-        var selected = new List<ManifestFile>();
+        var selected = new List<ManifestItem>();
 
-        for (var i = 0; i < _moduleList.Items.Count; i++)
+        for (int i = 0; i < _list.Items.Count; i++)
         {
-            if (_moduleList.GetItemChecked(i))
-            {
-                selected.Add(_files[i]);
-            }
+            if (_list.GetItemChecked(i))
+                selected.Add(_manifest.Arquivos[i]);
         }
+
+        return selected;
+    }
+
+    private async Task RunUpdateAsync()
+    {
+        var selected = GetSelectedItems();
 
         if (selected.Count == 0)
         {
-            MessageBox.Show("Selecione pelo menos um módulo para atualizar.", "Data Smart Enterprise");
+            MessageBox.Show("Selecione pelo menos um módulo.", "Data Smart Enterprise");
             return;
         }
 
-        var openModules = ProcessService.GetOpenModules(selected.Select(x => x.Name));
-        if (openModules.Count > 0)
+        foreach (var item in selected)
         {
-            MessageBox.Show(
-                "Feche os seguintes módulos antes de continuar:" + Environment.NewLine + Environment.NewLine +
-                "- " + string.Join(Environment.NewLine + "- ", openModules),
-                "Data Smart Enterprise",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-
-            return;
+            var proc = Path.GetFileNameWithoutExtension(item.Nome);
+            if (System.Diagnostics.Process.GetProcessesByName(proc).Length > 0)
+            {
+                MessageBox.Show($"Feche o módulo {item.Nome} antes de continuar.", "Data Smart Enterprise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
         }
 
-        EnableControls(false);
+        SetControls(false);
 
-        var backupService = new BackupService(_installDirectory, _backupDirectory, _log);
-        var downloadService = new DownloadService(_config.DownloadTimeoutSeconds, _config.MinimumFileSizeBytes);
-        var databaseUpdaterService = new DatabaseUpdaterService(_log);
+        var session = _backupService.CreateSessionBackup();
+        var date = DateTime.Now.ToString("yyyyMMdd");
 
-        var updateService = new UpdateService(
-            _installDirectory,
-            _config,
-            _log,
-            backupService,
-            downloadService,
-            databaseUpdaterService);
-
-        var progress = new Progress<(int percent, string message)>(p =>
+        try
         {
-            SetStatus(p.percent, p.message);
-        });
+            _backupService.BackupDatabase(session);
 
-        var result = await updateService.ExecuteAsync(selected, progress, CancellationToken.None);
+            int total = selected.Count;
+            int current = 0;
 
-        _currentLogPath = result.LogPath;
+            foreach (var item in selected)
+            {
+                current++;
 
-        if (result.Success)
-        {
+                SetProgress((int)(((current - 1) / (double)total) * 100), $"Preparando {item.Nome} ({current} de {total})...");
+
+                var finalPath = Path.Combine(_dataDir, item.Nome);
+                var tempPath = finalPath + ".tmp";
+
+                _backupService.BackupExe(item.Nome, session);
+
+                var downloadProgress = new Progress<int>(p =>
+                {
+                    var totalPercent = (int)((((current - 1) / (double)total) * 100) + (p / (double)total));
+                    SetProgress(totalPercent, $"Baixando {item.Nome}... {p}% | Total {totalPercent}%");
+                });
+
+                await _downloadService.DownloadAsync(item.Url, tempPath, downloadProgress);
+
+                if (File.Exists(finalPath))
+                    File.Delete(finalPath);
+
+                File.Move(tempPath, finalPath, true);
+
+                _log.Info($"Arquivo atualizado: {finalPath}");
+            }
+
+            SetProgress(98, "Abrindo atualizador de banco e clicando em Carregar arquivos...");
+            var bancoResult = _bancoUpdaterService.OpenAndClickCarregar(_dataDir);
+
+            SetProgress(100, "Atualização concluída com sucesso.");
+
             MessageBox.Show(
-                "Atualização concluída com sucesso." + Environment.NewLine + Environment.NewLine +
-                "Backup criado em:" + Environment.NewLine +
-                result.BackupPath + Environment.NewLine + Environment.NewLine +
-                "Atualizador de banco:" + Environment.NewLine +
-                result.DatabaseUpdaterMessage + Environment.NewLine + Environment.NewLine +
-                "Importante: o botão Processar arquivos NÃO foi acionado automaticamente." + Environment.NewLine + Environment.NewLine +
-                "Log:" + Environment.NewLine +
-                result.LogPath,
+                $"Atualização concluída com sucesso.\n\nBackup:\n{session}\n\nAtualizador de banco:\n{bancoResult}\n\nLog:\n{_log.LogFile}",
                 "Data Smart Enterprise",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+
+            Close();
         }
-        else
+        catch (Exception ex)
         {
-            MessageBox.Show(
-                "A atualização falhou e os arquivos antigos foram restaurados quando havia backup." + Environment.NewLine + Environment.NewLine +
-                "Erro:" + Environment.NewLine +
-                result.ErrorMessage + Environment.NewLine + Environment.NewLine +
-                "Backup:" + Environment.NewLine +
-                result.BackupPath + Environment.NewLine + Environment.NewLine +
-                "Log:" + Environment.NewLine +
-                result.LogPath,
-                "Data Smart Enterprise",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
+            _log.Error(ex.Message);
+            MessageBox.Show($"Falha na atualização.\n\nErro:\n{ex.Message}\n\nBackup:\n{session}\n\nLog:\n{_log.LogFile}", "Data Smart Enterprise", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            SetControls(true);
         }
-
-        EnableControls(true);
     }
 
-    private void SetStatus(int percent, string message)
+    private void SetControls(bool enabled)
     {
-        percent = Math.Clamp(percent, 0, 100);
-        _progressBar.Value = percent;
-        _percentLabel.Text = $"{percent}%";
-        _statusLabel.Text = message;
+        _btnUpdate.Enabled = enabled;
+        _btnClose.Enabled = enabled;
+        _btnAll.Enabled = enabled;
+        _btnNone.Enabled = enabled;
+        _list.Enabled = enabled;
     }
 
-    private void EnableControls(bool enabled)
+    private void SetProgress(int value, string message)
     {
-        _moduleList.Enabled = enabled;
-        _selectAllButton.Enabled = enabled;
-        _unselectAllButton.Enabled = enabled;
-        _updateButton.Enabled = enabled && _moduleList.CheckedItems.Count > 0;
-        _closeButton.Enabled = enabled;
+        value = Math.Clamp(value, 0, 100);
+
+        _progress.Value = value;
+        _lblPercent.Text = $"{value}%";
+        _lblStatus.Text = message;
+        Application.DoEvents();
     }
 }
