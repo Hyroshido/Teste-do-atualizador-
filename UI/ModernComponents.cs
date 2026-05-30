@@ -32,6 +32,14 @@ public class ModernButton : Button
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
+
+        if (_isHovering)
+        {
+            var rect = ClientRectangle;
+            rect.Inflate(-1, -1);
+            using var pen = new Pen(ModernColors.Primary);
+            e.Graphics.DrawRectangle(pen, rect);
+        }
         
         if (Focused)
         {
