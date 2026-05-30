@@ -103,7 +103,7 @@ public static class PathService
             var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             var links = Directory.GetFiles(desktop, "*.lnk");
 
-            Type shellType = Type.GetTypeFromProgID("WScript.Shell");
+            Type? shellType = Type.GetTypeFromProgID("WScript.Shell");
             if (shellType == null)
                 return false;
 
@@ -112,7 +112,11 @@ public static class PathService
             {
                 try
                 {
-                    dynamic shortcut = shell.CreateShortcut(link);
+                    object? shortcutObj = shell.CreateShortcut(link);
+                    if (shortcutObj == null)
+                        continue;
+
+                    dynamic shortcut = shortcutObj;
                     string? target = shortcut.TargetPath;
 
                     if (string.IsNullOrWhiteSpace(target) || !target.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
