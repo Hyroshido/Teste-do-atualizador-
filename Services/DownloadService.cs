@@ -1,5 +1,9 @@
 ﻿namespace DataSmartUpdater.Services;
 
+using System.Net;
+
+namespace DataSmartUpdater.Services;
+
 public sealed class DownloadService
 {
     private readonly HttpClient _http = new();
@@ -16,7 +20,29 @@ public sealed class DownloadService
         if (File.Exists(destination))
             File.Delete(destination);
 
+        _log.Info($"Downloading {Path.GetFileName(url)}");
+        _log.Info($"URL: {url}");
+        _log.Info($"Temporary destination: {destination}");
+
+        try
+        {
+            using var headRequest = new HttpRequestMessage(HttpMethod.Head, url);
+            using var headResponse = await _http.SendAsync(headRequest, HttpCompletionOption.ResponseHeadersRead, token);
+            if (headResponse.StatusCode == HttpStatusCode.NotFound)
+                throw new Exception($"File not found on GitHub. Check if the file exists inside the EXE folder in the repository. URL: {url}");
+
+            if (!headResponse.IsSuccessStatusCode && headResponse.StatusCode != HttpStatusCode.MethodNotAllowed)
+                _log.Warn($"HEAD request returned {headResponse.StatusCode} for {url}");
+        }
+        catch (HttpRequestException ex)
+        {
+            _log.Warn($"HEAD request failed: {ex.Message}");
+        }
+
         using var response = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            throw new Exception($"File not found on GitHub. Check if the file exists inside the EXE folder in the repository. URL: {url}");
+
         response.EnsureSuccessStatusCode();
 
         var total = response.Content.Headers.ContentLength ?? -1L;

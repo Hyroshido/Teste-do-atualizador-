@@ -14,6 +14,12 @@ public sealed class ModuleInfo
     public string LocalVersion { get; set; } = string.Empty;
     public ModuleUpdateState Estado { get; set; } = ModuleUpdateState.Unknown;
 
+    public string LocalSource => string.IsNullOrWhiteSpace(LocalPath)
+        ? "Not installed"
+        : LocalPath.Contains("\\EXE\\", StringComparison.OrdinalIgnoreCase)
+            ? "EXE"
+            : "Root";
+
     public string VersaoDisponivel => string.IsNullOrWhiteSpace(Versao) ? "Desconhecida" : Versao;
     public string TamanhoText => TamanhoBytes > 0 ? FormatBytes(TamanhoBytes) : "Desconhecido";
     public string DataText => string.IsNullOrWhiteSpace(Data) ? "-" : Data;

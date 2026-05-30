@@ -1,85 +1,161 @@
-# DataSmartUpdater
+# 🚀 DataSmart Deploy Center
 
-Atualizador profissional em C# + .NET 8 + Windows Forms.
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
+![Windows](https://img.shields.io/badge/Windows-Forms-0078D4)
+![Status](https://img.shields.io/badge/Status-Enterprise-blue)
+![License](https://img.shields.io/badge/License-Internal-lightgrey)
 
-## Como funciona
+## 📌 Overview
 
-O cliente executa apenas:
+`DataSmart Deploy Center` is the new Windows Forms deployment engine for DataSmart clients. It loads a GitHub manifest, downloads module executables into a structured `EXE` folder, performs safe backups, migrates legacy root executables, and automates the internal `Atualizador de Banco de Dados.exe` flow.
 
-```txt
-DataSmartUpdater.exe
+This tool also supports self-updating the updater itself from a dedicated `updater-manifest.json` release manifest.
+
+## ✨ Key Features
+
+- 🌐 GitHub-based module updates using `manifest.json`
+- 📦 Organized `EXE` folder deployment
+- 🔁 Legacy root executable migration support
+- 💾 Automatic `COMERCIAL.DAT` backup before deployment
+- 🛡️ Safe update validation with SHA256 support
+- 🧩 Clear module selection and update status
+- ⚙️ Database updater automation and optional closing
+- 📜 Live log console and persistent log files
+- 🔄 Self-update for `DataSmartUpdater.exe`
+- 🧠 Smart `DataSmart` path detection and configuration
+
+## 🗂️ Project Structure
+
 ```
-
-O executável:
-
-1. Baixa o `manifest.json` do GitHub.
-2. Mostra os módulos disponíveis.
-3. Permite selecionar um ou vários módulos.
-4. Cria backup do `COMERCIAL.DAT`.
-5. Cria backup dos `.exe` antigos com data, exemplo: `SPED_20260529.exe`.
-6. Baixa os arquivos novos.
-7. Substitui os módulos.
-8. Abre o `atualizador de banco de dados.exe`.
-9. Clica automaticamente apenas em `Carregar arquivos`.
-10. Não clica em `Processar arquivos`.
-
-## Arquivos importantes
-
-```txt
-DataSmartUpdater.exe      -> arquivo que vai para a área de trabalho do cliente
-appsettings.json          -> configuração do atualizador
-manifest.json             -> arquivo que deve subir no GitHub
-```
-
-## Como publicar
-
-No computador de desenvolvimento:
-
-```powershell
-dotnet restore
-dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
-```
-
-O executável ficará em:
-
-```txt
-bin\Release\net8.0-windows\win-x64\publish\DataSmartUpdater.exe
-```
-
-Copie para a área de trabalho do cliente:
-
-```txt
-DataSmartUpdater.exe
-appsettings.json
-```
-
-## Onde colocar o manifest no GitHub
-
-Suba o arquivo `manifest.json` para o repositório:
-
-```txt
-https://github.com/Hyroshido/Teste-do-atualizador-
-```
-
-O link RAW esperado é:
-
-```txt
-https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/manifest.json
-```
-
-## Estrutura recomendada no GitHub
-
-```txt
-Teste-do-atualizador-/
+DataSmartUpdater/
+├── EXE/
+│   ├── SmartNFe.exe
+│   ├── SmartNFSe.exe
+│   ├── SmartFood.exe
+│   ├── SmartCTE.exe
+│   ├── SPED.exe
+│   ├── SPED_Fiscal.exe
+│   ├── SmartBackup.exe
+│   ├── SmartBackup_SmartImoveis.exe
+│   ├── SmartContador.exe
+│   ├── SmartTools.exe
+│   ├── SmartNFSe_260513.exe
+│   └── SmartNFe_Incopal.exe
+├── Imagens/
+├── Models/
+├── Services/
+├── publish/
+├── app.manifest
+├── appsettings.example.json
 ├── manifest.json
-├── SmartNFe.exe
-├── SmartNFSe.exe
-├── SmartFood.exe
-├── SmartCTE.exe
-└── SPED.exe
+├── updater-manifest.json
+├── DataSmartUpdater.csproj
+├── Program.cs
+├── MainForm.cs
+└── README.md
 ```
 
-## Observação
+## 🖥️ Client Machine Structure
 
-O `DataSmartUpdater.exe` não precisa ser alterado sempre que mudar os módulos.
-Você só atualiza o `manifest.json` e os `.exe` no GitHub.
+```
+C:\DataSmart
+├── EXE
+│   ├── SmartNFe.exe
+│   ├── SmartNFSe.exe
+│   ├── SmartFood.exe
+│   ├── SmartCTE.exe
+│   └── SPED.exe
+├── Backup
+│   ├── Banco
+│   ├── Executaveis
+│   ├── Logs
+│   ├── Historico
+│   └── Config
+│       └── appsettings.json
+├── Atualizador de Banco de Dados.exe
+├── COMERCIAL.DAT
+└── other DataSmart files
+```
+
+## 🚀 How the Update Flow Works
+
+1. The updater loads `C:\DataSmart\Backup\Config\appsettings.json`.
+2. If the DataSmart installation path is invalid, it searches known paths and desktop shortcuts.
+3. The updater loads `manifest.json` from GitHub.
+4. Modules are displayed with local source, local version, available version, and update status.
+5. Selected modules are backed up, downloaded, validated, and deployed to `C:\DataSmart\EXE`.
+6. The internal database updater is launched and optionally processed.
+7. Logs and history are persisted under `C:\DataSmart\Backup`.
+
+## 📦 How to Publish a New Module Version
+
+1. Place the new executable inside the repository `EXE/` folder.
+2. Update `manifest.json` with the new version and GitHub raw URL.
+3. Commit and push the changes.
+4. The client will download the module from the new manifest path.
+
+## 🔁 How to Publish a New DataSmartUpdater.exe Version
+
+1. Publish the new `DataSmartUpdater.exe` build.
+2. Upload it into the repository `publish/` folder.
+3. Update `updater-manifest.json` with the new version, URL, and release notes.
+4. Clients will be prompted to self-update when they start the updater.
+
+## 🛠️ Build
+
+```bash
+dotnet build -c Release
+```
+
+## 📤 Publish Single EXE
+
+```bash
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:EnableCompressionInSingleFile=true
+```
+
+## 📍 What to Deliver to the Client
+
+Deliver only:
+
+- `DataSmartUpdater.exe`
+
+The updater manages module downloads and deployment using GitHub manifests and the client-side `C:\DataSmart` layout.
+
+## 🧾 Logs
+
+Logs are written to:
+
+- `C:\DataSmart\Backup\Logs`
+
+## 🔐 Security
+
+The updater now includes:
+
+- SHA256 validation support for downloads
+- File size validation before deployment
+- Temporary download staging before replacement
+- Safe self-update via helper script
+- Legacy executable migration with logging
+
+## 🧯 Troubleshooting
+
+- HTTP 404: Verify the GitHub raw URL and case-sensitive `EXE` folder path.
+- No internet: the updater will show a manifest load error and continue safely.
+- File in use: close the running DataSmart modules before deploying.
+- GitHub unavailable: retry later.
+- DataSmart folder not found: choose the installation folder when prompted.
+- Database updater button not found: the updater logs a friendly warning and leaves the updater open.
+- Self-update failed: the current executable stays intact.
+
+## 🧭 Roadmap
+
+- Code signing for all binaries
+- CDN distribution for faster downloads
+- Incremental update patches
+- Web dashboard for release tracking
+- Release channels and silent mode
+- Internal telemetry dashboard
+
+## 👤 Maintainer
+
+DataSmart Support / Internal IT

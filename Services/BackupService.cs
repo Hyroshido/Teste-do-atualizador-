@@ -33,6 +33,60 @@ public sealed class BackupService
         Directory.CreateDirectory(_backupConfig);
     }
 
+    public void MigrateRootExecutables()
+    {
+        var knownFiles = new[]
+        {
+            "SmartNFe.exe",
+            "SmartNFSe.exe",
+            "SmartFood.exe",
+            "SmartCTE.exe",
+            "SPED.exe",
+            "SPED_Fiscal.exe",
+            "SmartBackup.exe",
+            "SmartBackup_SmartImoveis.exe",
+            "SmartContador.exe",
+            "SmartTools.exe",
+            "SmartNFSe_260513.exe",
+            "SmartNFe_Incopal.exe"
+        };
+
+        try
+        {
+            Directory.CreateDirectory(_exeDir);
+            _log.Info("Verificando migração de executáveis antigos.");
+
+            foreach (var fileName in knownFiles)
+            {
+                var rootFile = Path.Combine(_dataDir, fileName);
+                var exeFile = Path.Combine(_exeDir, fileName);
+
+                if (!File.Exists(rootFile))
+                    continue;
+
+                if (File.Exists(exeFile))
+                {
+                    _log.Warn($"File already exists in EXE, kept in root: {fileName}");
+                    continue;
+                }
+
+                try
+                {
+                    File.Move(rootFile, exeFile);
+                    _log.Info($"File migrated from root to EXE: {fileName}");
+                }
+                catch (Exception ex)
+                {
+                    _log.Warn($"Failed to migrate {fileName}: {ex.Message}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _log.Warn($"EXE migration failed: {ex.Message}");
+        }
+    }
+
     public string CreateSessionBackup()
     {
         var path = Path.Combine(_backupRoot, $"Backup_{DateTime.Now:yyyyMMdd_HHmmss}");
@@ -102,15 +156,34 @@ public sealed class BackupService
             var executaveis = Directory.GetFiles(Path.Combine(sessionPath, "Executaveis"), "*.exe", SearchOption.TopDirectoryOnly);
             foreach (var backupFile in executaveis)
             {
-                var name = Path.GetFileName(backupFile);
-                var target = Path.Combine(_dataDir, name);
+                var targetFileName = GetOriginalFileName(backupFile);
+                var target = Path.Combine(_exeDir, targetFileName);
                 File.Copy(backupFile, target, true);
-                _log.Info($"Rollback: restaurado {name}");
+                _log.Info($"Rollback: restaurado {targetFileName}");
             }
         }
         catch (Exception ex)
         {
             _log.Warn($"Falha ao restaurar backup de sessão: {ex.Message}");
         }
+    }
+
+    private static string GetOriginalFileName(string backupFile)
+    {
+        var fileName = Path.GetFileName(backupFile) ?? string.Empty;
+        var ext = Path.GetExtension(fileName);
+        var name = Path.GetFileNameWithoutExtension(fileName);
+
+        var separator = name.LastIndexOf('_');
+        if (separator > 0 && separator + 1 < name.Length)
+        {
+            var maybeTimestamp = name[(separator + 1)..];
+            if (maybeTimestamp.Length == 15 && long.TryParse(maybeTimestamp.Replace("_", string.Empty), out _))
+            {
+                return name[..separator] + ext;
+            }
+        }
+
+        return fileName;
     }
 }

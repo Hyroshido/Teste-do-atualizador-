@@ -1,0 +1,8 @@
+{
+  "nome": "DataSmartUpdater.exe",
+  "versao": "1.0.1",
+  "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/publish/DataSmartUpdater.exe",
+  "sha256": "",
+  "obrigatorio": false,
+  "notas": "Visual improvements, bug fixes and new deployment features."
+}
