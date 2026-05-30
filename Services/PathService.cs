@@ -107,12 +107,12 @@ public static class PathService
             if (shellType == null)
                 return false;
 
-            dynamic shell = Activator.CreateInstance(shellType);
+            object shell = Activator.CreateInstance(shellType)!;
             foreach (var link in links)
             {
                 try
                 {
-                    object? shortcutObj = shell.CreateShortcut(link);
+                    var shortcutObj = shellType.InvokeMember("CreateShortcut", System.Reflection.BindingFlags.InvokeMethod, null, shell, new object[] { link });
                     if (shortcutObj == null)
                         continue;
 
