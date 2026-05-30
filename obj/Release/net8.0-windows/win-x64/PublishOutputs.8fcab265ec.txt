@@ -1,2 +1,0 @@
-C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\win-x64\publish\DataSmartUpdater.pdb
-C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\bin\Release\net8.0-windows\win-x64\publish\DataSmartUpdater.exe

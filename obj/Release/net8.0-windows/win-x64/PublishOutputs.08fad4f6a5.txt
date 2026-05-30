@@ -1,6 +1,0 @@
-C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Release\net8.0-windows\win-x64\publish\DataSmartUpdater.pdb
-C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Release\net8.0-windows\win-x64\publish\Imagens\logo-datasmart-new.svg
-C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Release\net8.0-windows\win-x64\publish\Imagens\logo-datasmart.svg
-C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Release\net8.0-windows\win-x64\publish\Imagens\logo-datasmart_ext.png
-C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Release\net8.0-windows\win-x64\publish\Imagens\Marcos.png
-C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Release\net8.0-windows\win-x64\publish\DataSmartUpdater.exe
