@@ -109,17 +109,20 @@ public sealed class MainForm : Form
             Margin = new Padding(0)
         };
         // ==========================================================================
-        // TRECHO DE CORREÇÃO UNIFICADO - DESIGN DEFENSIVO WINDOWS FORMS
+        // ARQUITETURA DE DESIGN DEFENSIVO UNIFICADO E INQUEBRÁVEL - WINDOWS FORMS
         // ==========================================================================
-        // STEP 1: FORCE STRICT TABLELAYOUTPANEL RESPONSIVE PROPORTIONS
+        /* --- STAGE 1: MASTER ROOT LAYOUT FORCE RE-BALANCING --- */
+        rootLayout.SuspendLayout();
         rootLayout.AutoSize = false;
         rootLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
+        rootLayout.Dock = DockStyle.Fill;
+
         rootLayout.RowStyles.Clear();
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 140f)); // Header
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 90f));  // Cards
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 60f));   // Grid Módulos
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 40f));   // Logs e Banco
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 55f));  // Footer Fixo
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 150f)); // Header Fixo (Título e Topo)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100f)); // Cards Informativos Superiores
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 55f));   // Central Grid (DataGridView dos Módulos)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));   // Split Inferior (Terminal Log + Banco)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));  // Rodapé Fixo dos Botões de Ação
         Controls.Add(rootLayout);
 
         var headerPanel = new Panel
@@ -385,22 +388,34 @@ public sealed class MainForm : Form
 
         _rbNoDb.Text = "Não executar";
         _rbNoDb.AutoSize = true;
+        _rbNoDb.MinimumSize = new Size(240, 24);
+        _rbNoDb.Margin = new Padding(6);
+        _rbNoDb.Font = new Font("Segoe UI", 9F);
         _rbNoDb.ForeColor = Color.White;
         _rbNoDb.Checked = true;
         bancoPanel.Controls.Add(_rbNoDb);
 
         _rbOnlyLoad.Text = "Apenas carregar arquivos";
         _rbOnlyLoad.AutoSize = true;
+        _rbOnlyLoad.MinimumSize = new Size(240, 24);
+        _rbOnlyLoad.Margin = new Padding(6);
+        _rbOnlyLoad.Font = new Font("Segoe UI", 9F);
         _rbOnlyLoad.ForeColor = Color.White;
         bancoPanel.Controls.Add(_rbOnlyLoad);
 
         _rbLoadProcess.Text = "Carregar e processar arquivos";
         _rbLoadProcess.AutoSize = true;
+        _rbLoadProcess.MinimumSize = new Size(240, 24);
+        _rbLoadProcess.Margin = new Padding(6);
+        _rbLoadProcess.Font = new Font("Segoe UI", 9F);
         _rbLoadProcess.ForeColor = Color.White;
         bancoPanel.Controls.Add(_rbLoadProcess);
 
         _rbLoadProcessClose.Text = "Carregar, processar e fechar";
         _rbLoadProcessClose.AutoSize = true;
+        _rbLoadProcessClose.MinimumSize = new Size(240, 24);
+        _rbLoadProcessClose.Margin = new Padding(6);
+        _rbLoadProcessClose.Font = new Font("Segoe UI", 9F);
         _rbLoadProcessClose.ForeColor = Color.White;
         bancoPanel.Controls.Add(_rbLoadProcessClose);
 
@@ -456,59 +471,49 @@ public sealed class MainForm : Form
         };
         rootLayout.Controls.Add(footerPanel, 0, 4);
 
-        // Layout do rodapé com 3 colunas: área principal (progresso), label de % e ações
-        var footerLayout = new TableLayoutPanel
+        footerPanel.SuspendLayout();
+        var footerButtonsContainer = new TableLayoutPanel
         {
-            Dock = DockStyle.Fill,
-            ColumnCount = 3,
+            Dock = DockStyle.Right,
+            Width = 520,
+            Height = 45,
+            ColumnCount = 4,
             RowCount = 1,
             Margin = new Padding(0),
             Padding = new Padding(0)
         };
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        // FIX: Linha do footer com altura absoluta para garantir que o espaço do footer
-        // seja sempre preservado e não seja empurrado por conteúdo abaixo.
-        footerLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));
-        footerPanel.Controls.Add(footerLayout);
+        footerButtonsContainer.ColumnStyles.Clear();
+        footerButtonsContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
+        footerButtonsContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
+        footerButtonsContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
+        footerButtonsContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
+        footerButtonsContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
 
-        _progressTotal.Dock = DockStyle.Fill;
-        _progressTotal.Height = 18;
-        _progressTotal.Minimum = 0;
-        _progressTotal.Maximum = 100;
-        footerLayout.Controls.Add(_progressTotal, 0, 0);
+        ConfigureButton(_btnUpdate, "Implantar", 0, 0, 120, 34, primary, Color.White, footerButtonsContainer);
+        ConfigureButton(_btnClose, "Fechar", 0, 0, 120, 34, panelBackground, SystemColors.ControlText, footerButtonsContainer);
+        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 120, 34, panelBackground, SystemColors.ControlText, footerButtonsContainer);
+        ConfigureButton(_btnRefresh, "Verificar", 0, 0, 120, 34, panelBackground, SystemColors.ControlText, footerButtonsContainer);
 
-        _lblProgressPercent.Text = "0%";
-        _lblProgressPercent.ForeColor = primary;
-        _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-        _lblProgressPercent.AutoSize = true;
-        _lblProgressPercent.TextAlign = ContentAlignment.MiddleRight; // alinha o texto dentro da célula do TableLayout
-        footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
-
-        // STEP 3: RESURRECT FOOTER ACTIONS AND THE "IMPLANTAR" BUTTON
-        var footerActions = new FlowLayoutPanel
-        {
-            Dock = DockStyle.Fill,
-            FlowDirection = FlowDirection.RightToLeft,
-            WrapContents = false,
-            AutoSize = true,
-            Margin = new Padding(0),
-            Padding = new Padding(0)
-        };
-        footerLayout.Controls.Add(footerActions, 2, 0);
-
-        ConfigureButton(_btnRefresh, "Verificar", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
-        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
-        ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
-        ConfigureButton(_btnUpdate, "Implantar", 0, 0, 130, 32, primary, Color.White, footerActions);
-        _btnUpdate.Size = new Size(130, 32);
+        _btnUpdate.Size = new Size(120, 34);
+        _btnUpdate.Dock = DockStyle.Fill;
         _btnUpdate.AutoSize = false;
 
-        _btnRefresh.Margin = new Padding(0, 0, 8, 0);
-        _btnOpenLog.Margin = new Padding(0, 0, 8, 0);
-        _btnClose.Margin = new Padding(0, 0, 8, 0);
-        _btnUpdate.Margin = new Padding(0, 0, 0, 0);
+        _btnClose.Size = new Size(120, 34);
+        _btnClose.Dock = DockStyle.Fill;
+        _btnClose.AutoSize = false;
+
+        _btnOpenLog.Size = new Size(120, 34);
+        _btnOpenLog.Dock = DockStyle.Fill;
+        _btnOpenLog.AutoSize = false;
+
+        _btnRefresh.Size = new Size(120, 34);
+        _btnRefresh.Dock = DockStyle.Fill;
+        _btnRefresh.AutoSize = false;
+
+        footerPanel.Controls.Clear();
+        footerPanel.Controls.Add(footerButtonsContainer);
+        footerPanel.ResumeLayout(false);
+        footerPanel.PerformLayout();
 
         _btnUpdate.Click += async (_, _) => await RunUpdateAsync();
         _btnClose.Click += (_, _) => Close();
@@ -522,6 +527,8 @@ public sealed class MainForm : Form
             b.MouseEnter += (_, _) => b.BackColor = ControlPaint.Light(normal, 0.06f);
             b.MouseLeave += (_, _) => b.BackColor = normal;
         }
+        rootLayout.ResumeLayout(false);
+        rootLayout.PerformLayout();
     }
 
     private Panel CreateCard(Rectangle bounds, Color backColor)
