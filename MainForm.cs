@@ -83,16 +83,17 @@ public sealed class MainForm : Form
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
-        BackColor = Color.FromArgb(7, 18, 38);
+        BackColor = SystemColors.Control;
         Font = new Font("Segoe UI", 9);
+        // Estilo Windows Forms configurado em código C#; não há arquivo CSS para o formulário.
         // Improve text rendering
         SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
-        var primary = Color.FromArgb(45, 151, 255);
-        var cardBackground = Color.FromArgb(15, 27, 50);
-        var secondaryCard = Color.FromArgb(19, 33, 63);
-        var panelBackground = Color.FromArgb(10, 18, 38);
-        var mutedText = Color.FromArgb(148, 163, 184);
+        var primary = Color.FromArgb(0, 120, 215);
+        var cardBackground = SystemColors.Window;
+        var secondaryCard = SystemColors.ControlLight;
+        var panelBackground = SystemColors.Control;
+        var mutedText = SystemColors.GrayText;
 
         var imageDir = Path.Combine(AppContext.BaseDirectory, "Imagens");
         var logoImage = LoadLogoImage(imageDir);
@@ -117,7 +118,7 @@ public sealed class MainForm : Form
         var headerPanel = new Panel
         {
             Dock = DockStyle.Fill,
-            BackColor = Color.FromArgb(14, 24, 43),
+            BackColor = SystemColors.ControlLight,
             Padding = new Padding(18)
         };
         rootLayout.Controls.Add(headerPanel, 0, 0);
@@ -261,11 +262,11 @@ public sealed class MainForm : Form
         moduleLayout.Controls.Add(moduleTitle, 0, 0);
 
         _gridModules.Dock = DockStyle.Fill;
-        _gridModules.BackgroundColor = panelBackground;
-        _gridModules.BorderStyle = BorderStyle.None;
+        _gridModules.BackgroundColor = SystemColors.Window;
+        _gridModules.BorderStyle = BorderStyle.FixedSingle;
         _gridModules.EnableHeadersVisualStyles = false;
-        _gridModules.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(17, 24, 39);
-        _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+        _gridModules.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+        _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.ControlText;
         _gridModules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _gridModules.ColumnHeadersHeight = 34;
         _gridModules.RowHeadersVisible = false;
@@ -274,17 +275,17 @@ public sealed class MainForm : Form
         _gridModules.AllowUserToResizeRows = false;
         _gridModules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         _gridModules.MultiSelect = false;
-        _gridModules.ForeColor = Color.White;
+        _gridModules.ForeColor = SystemColors.ControlText;
         _gridModules.RowTemplate.Height = 34;
         _gridModules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        _gridModules.DefaultCellStyle.BackColor = Color.FromArgb(16, 22, 37);
-        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(12, 18, 29);
-        _gridModules.DefaultCellStyle.ForeColor = Color.White;
-        _gridModules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
+        _gridModules.DefaultCellStyle.BackColor = SystemColors.Window;
+        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
+        _gridModules.DefaultCellStyle.ForeColor = SystemColors.ControlText;
+        _gridModules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
         _gridModules.DefaultCellStyle.SelectionForeColor = Color.White;
         _gridModules.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
         _gridModules.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-        _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
+        _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
         _gridModules.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
         _gridModules.CellValueChanged += (_, _) => UpdateSelectionCount();
         _gridModules.CurrentCellDirtyStateChanged += (_, _) =>
@@ -314,8 +315,8 @@ public sealed class MainForm : Form
         };
         moduleLayout.Controls.Add(moduleActions, 0, 2);
 
-        ConfigureButton(_btnClearAll, "Limpar seleção", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
-        ConfigureButton(_btnSelectAll, "Selecionar todos", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
+        ConfigureButton(_btnClearAll, "Limpar seleção", 0, 0, 120, 32, panelBackground, SystemColors.ControlText, moduleActions);
+        ConfigureButton(_btnSelectAll, "Selecionar todos", 0, 0, 120, 32, panelBackground, SystemColors.ControlText, moduleActions);
         _btnClearAll.Margin = new Padding(0, 0, 8, 0);
         _btnSelectAll.Margin = new Padding(0, 0, 8, 0);
         _btnSelectAll.Click += (_, _) => SetAllSelection(true);
@@ -412,9 +413,9 @@ public sealed class MainForm : Form
         logCard.Controls.Add(logTitle);
 
         _logConsole.Dock = DockStyle.Fill;
-        _logConsole.BackColor = Color.FromArgb(10, 18, 34);
-        _logConsole.ForeColor = Color.FromArgb(180, 210, 235);
-        _logConsole.BorderStyle = BorderStyle.None;
+        _logConsole.BackColor = SystemColors.Window;
+        _logConsole.ForeColor = SystemColors.ControlText;
+        _logConsole.BorderStyle = BorderStyle.FixedSingle;
         _logConsole.ReadOnly = true;
         _logConsole.Font = new Font("Consolas", 9);
         logCard.Controls.Add(_logConsole);
@@ -462,9 +463,9 @@ public sealed class MainForm : Form
         };
         footerLayout.Controls.Add(footerActions, 2, 0);
 
-        ConfigureButton(_btnRefresh, "Verificar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnRefresh, "Verificar", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
+        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
+        ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
         ConfigureButton(_btnUpdate, "Implantar", 0, 0, 140, 32, primary, Color.White, footerActions);
 
         _btnRefresh.Margin = new Padding(0, 0, 8, 0);
@@ -505,7 +506,7 @@ public sealed class MainForm : Form
         {
             Width = 160,
             Height = 110,
-            BackColor = Color.FromArgb(18, 28, 48),
+            BackColor = SystemColors.Window,
             Padding = new Padding(10)
         };
 
@@ -515,7 +516,7 @@ public sealed class MainForm : Form
         var valueLabel = new Label
         {
             Text = "0",
-            ForeColor = Color.White,
+            ForeColor = SystemColors.ControlText,
             Font = new Font("Segoe UI", 18, FontStyle.Bold),
             AutoSize = false,
             TextAlign = ContentAlignment.MiddleLeft,
@@ -526,7 +527,7 @@ public sealed class MainForm : Form
         var textLabel = new Label
         {
             Text = title,
-            ForeColor = Color.FromArgb(160, 180, 210),
+            ForeColor = SystemColors.GrayText,
             Font = new Font("Segoe UI", 9f, FontStyle.Regular),
             AutoSize = false,
             TextAlign = ContentAlignment.MiddleLeft,

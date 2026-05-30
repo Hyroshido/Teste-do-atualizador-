@@ -9,6 +9,8 @@
 
 `DataSmart Deploy Center` é o motor de implantação Windows Forms para clientes DataSmart. Ele carrega um manifesto do GitHub, baixa módulos em um diretório `EXE`, faz backups seguros, migra executáveis legados da raiz e automatiza o fluxo interno do `Atualizador de Banco de Dados.exe`.
 
+O aplicativo é destinado a execução no Windows; o Linux pode ser usado apenas para compilação com o SDK .NET 8.
+
 O aplicativo também suporta autoatualização do próprio `DataSmartUpdater.exe` por meio de um manifesto dedicado `updater-manifest.json`.
 
 ## ✨ Funcionalidades Principais
