@@ -433,11 +433,19 @@ public sealed class MainForm : Form
             Dock = DockStyle.Fill,
             ColumnCount = 3,
             RowCount = 1,
-            Margin = new Padding(0)
+            Margin = new Padding(0),
+            Padding = new Padding(0)
         };
+<<<<<<< HEAD
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80f));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
+=======
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        footerLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+>>>>>>> 33d2243 (feat: Ajustar layout e estilos do painel de rodapé na MainForm)
         footerPanel.Controls.Add(footerLayout);
 
         _progressTotal.Dock = DockStyle.Fill;
@@ -450,7 +458,11 @@ public sealed class MainForm : Form
         _lblProgressPercent.ForeColor = primary;
         _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _lblProgressPercent.AutoSize = true;
+<<<<<<< HEAD
         _lblProgressPercent.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+=======
+        _lblProgressPercent.TextAlign = ContentAlignment.MiddleRight;
+>>>>>>> 33d2243 (feat: Ajustar layout e estilos do painel de rodapé na MainForm)
         footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
 
         var footerActions = new FlowLayoutPanel
@@ -459,7 +471,12 @@ public sealed class MainForm : Form
             FlowDirection = FlowDirection.LeftToRight,
             WrapContents = false,
             AutoSize = true,
+<<<<<<< HEAD
             Margin = new Padding(0)
+=======
+            Margin = new Padding(0),
+            Padding = new Padding(0)
+>>>>>>> 33d2243 (feat: Ajustar layout e estilos do painel de rodapé na MainForm)
         };
         footerLayout.Controls.Add(footerActions, 2, 0);
 
