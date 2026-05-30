@@ -571,11 +571,23 @@ public sealed class MainForm : Form
         btn.BackColor = back;
         btn.ForeColor = fore;
         btn.FlatStyle = FlatStyle.Flat;
-        btn.FlatAppearance.BorderSize = 0;
-        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Light(back);
-        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(back);
-        btn.Cursor = Cursors.Hand;
+        // Ajustes de aparência e comportamento:
+        btn.FlatAppearance.BorderSize = 1; // borda leve para contraste
+        btn.FlatAppearance.BorderColor = Color.FromArgb(56, 189, 248);
+        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Light(back, 0.06f);
+        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(back, 0.06f);
+
+        // Garantias de layout e acessibilidade:
+        btn.Cursor = Cursors.Hand; // indica que é clicável
+        btn.AutoSize = false; // usamos dimensões explícitas para evitar mudanças inesperadas
+        btn.MinimumSize = new Size(Math.Max(80, width), Math.Max(28, height)); // tamanho mínimo seguro
         btn.Padding = new Padding(6, 4, 6, 4);
+        btn.Margin = new Padding(6, 4, 6, 4); // espaçamento consistente entre botões
+        btn.Anchor = AnchorStyles.Right; // mantém alinhamento à direita dentro do painel
+        btn.TabStop = true; // navegável por teclado
+        btn.AccessibleName = text; // acessibilidade
+
+        // Adiciona ao container pai (FlowLayoutPanel ou outro)
         parent.Controls.Add(btn);
         try
         {
