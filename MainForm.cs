@@ -85,6 +85,8 @@ public sealed class MainForm : Form
         MaximizeBox = false;
         BackColor = Color.FromArgb(7, 18, 38);
         Font = new Font("Segoe UI", 9);
+        // Improve text rendering
+        SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
         var primary = Color.FromArgb(45, 151, 255);
         var cardBackground = Color.FromArgb(15, 27, 50);
@@ -162,12 +164,12 @@ public sealed class MainForm : Form
         _lblSubtitle.AutoSize = true;
         brandLayout.Controls.Add(_lblSubtitle);
 
-        _lblAppVersion.Text = "Versao do Atualizador: 1.0.0";
+        _lblAppVersion.Text = "Versão: 1.0.0";
         _lblAppVersion.ForeColor = mutedText;
         _lblAppVersion.AutoSize = true;
         brandLayout.Controls.Add(_lblAppVersion);
 
-        _lblManifestVersion.Text = "Versao do Manifest: desconhecida";
+        _lblManifestVersion.Text = "Manifest: desconhecido";
         _lblManifestVersion.ForeColor = mutedText;
         _lblManifestVersion.AutoSize = true;
         brandLayout.Controls.Add(_lblManifestVersion);
@@ -176,6 +178,10 @@ public sealed class MainForm : Form
         _lblConnection.ForeColor = Color.FromArgb(122, 220, 191);
         _lblConnection.AutoSize = true;
         brandLayout.Controls.Add(_lblConnection);
+
+        // separator
+        var sep = new Panel { Height = 1, Dock = DockStyle.Bottom, BackColor = Color.FromArgb(30, 40, 60), Margin = new Padding(0,8,0,0) };
+        headerPanel.Controls.Add(sep);
 
         if (heroImage is not null)
         {
@@ -470,6 +476,14 @@ public sealed class MainForm : Form
         _btnClose.Click += (_, _) => Close();
         _btnRefresh.Click += async (_, _) => await InitializeAsync();
         _btnOpenLog.Click += (_, _) => OpenLogFile();
+
+        // Add hover effects for footer buttons
+        foreach (Button b in new[] { _btnRefresh, _btnOpenLog, _btnClose, _btnUpdate })
+        {
+            var normal = b.BackColor;
+            b.MouseEnter += (_, _) => b.BackColor = ControlPaint.Light(normal, 0.06f);
+            b.MouseLeave += (_, _) => b.BackColor = normal;
+        }
     }
 
     private Panel CreateCard(Rectangle bounds, Color backColor)
@@ -489,34 +503,56 @@ public sealed class MainForm : Form
     {
         var card = new Panel
         {
-            Width = 150,
+            Width = 160,
             Height = 110,
-            BackColor = Color.FromArgb(16, 24, 42)
+            BackColor = Color.FromArgb(18, 28, 48),
+            Padding = new Padding(10)
         };
+
+        // Apply rounded corners
+        try { SetRoundedPanel(card, 10); } catch { }
 
         var valueLabel = new Label
         {
             Text = "0",
             ForeColor = Color.White,
-            Font = new Font("Segoe UI", 16, FontStyle.Bold),
-            AutoSize = true,
-            Left = 10,
-            Top = 10
+            Font = new Font("Segoe UI", 18, FontStyle.Bold),
+            AutoSize = false,
+            TextAlign = ContentAlignment.MiddleLeft,
+            Dock = DockStyle.Top,
+            Height = 48
         };
 
         var textLabel = new Label
         {
             Text = title,
             ForeColor = Color.FromArgb(160, 180, 210),
-            Font = new Font("Segoe UI", 8.5f, FontStyle.Regular),
-            AutoSize = true,
-            Left = 10,
-            Top = 52
+            Font = new Font("Segoe UI", 9f, FontStyle.Regular),
+            AutoSize = false,
+            TextAlign = ContentAlignment.MiddleLeft,
+            Dock = DockStyle.Bottom,
+            Height = 30
         };
 
         card.Controls.Add(valueLabel);
         card.Controls.Add(textLabel);
         return card;
+    }
+
+    private void SetRoundedPanel(Panel panel, int radius)
+    {
+        var rect = new Rectangle(0, 0, panel.Width, panel.Height);
+        var path = new System.Drawing.Drawing2D.GraphicsPath();
+        var arc = new Rectangle(rect.Location, new Size(radius, radius));
+        path.AddArc(arc, 180, 90);
+        arc.X = rect.Right - radius;
+        path.AddArc(arc, 270, 90);
+        arc.Y = rect.Bottom - radius;
+        path.AddArc(arc, 0, 90);
+        arc.X = rect.Left;
+        path.AddArc(arc, 90, 90);
+        path.CloseFigure();
+        panel.Region = new Region(path);
     }
 
     private void ConfigureButton(Button btn, string text, int left, int top, int width, int height, Color back, Color fore, Control parent)

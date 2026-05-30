@@ -29,10 +29,10 @@ public sealed class SplashForm : Form
         {
             Text = "DATASMART DEPLOY CENTER",
             ForeColor = Color.FromArgb(56, 189, 248),
-            Font = new Font("Segoe UI", 18, FontStyle.Bold),
+            Font = new Font("Segoe UI", 20, FontStyle.Bold),
             AutoSize = true,
             Left = 30,
-            Top = 30
+            Top = 24
         };
         Controls.Add(logo);
 
@@ -96,6 +96,12 @@ public sealed class SplashForm : Form
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        // center controls
+        foreach (Control c in Controls)
+        {
+            c.Left = (Width - c.Width) / 2;
+        }
+
         _timer.Start();
     }
 }
