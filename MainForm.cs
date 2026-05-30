@@ -77,259 +77,334 @@ public sealed class MainForm : Form
     {
         Text = _config.AppName;
         Width = 980;
-        Height = 860;
-        MinimumSize = new Size(980, 860);
+        Height = 820;
+        MinimumSize = new Size(980, 720);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         BackColor = Color.FromArgb(7, 18, 38);
         Font = new Font("Segoe UI", 9);
 
-        var blue = Color.FromArgb(45, 151, 255);
+        var primary = Color.FromArgb(45, 151, 255);
         var cardBackground = Color.FromArgb(15, 27, 50);
+        var secondaryCard = Color.FromArgb(19, 33, 63);
         var panelBackground = Color.FromArgb(10, 18, 38);
-        var textGray = Color.FromArgb(148, 163, 184);
+        var mutedText = Color.FromArgb(148, 163, 184);
 
         var imageDir = Path.Combine(AppContext.BaseDirectory, "Imagens");
         var logoImage = LoadLogoImage(imageDir);
         var heroImage = LoadImage(imageDir, "Marcos.png");
 
-        var headerPanel = CreateCard(new Rectangle(20, 20, 940, 150), Color.FromArgb(14, 24, 43));
-        Controls.Add(headerPanel);
+        var rootLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 5,
+            BackColor = BackColor,
+            Padding = new Padding(16),
+            Margin = new Padding(0)
+        };
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 150f));
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 95f));
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 35f));
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));
+        Controls.Add(rootLayout);
+
+        var headerPanel = new Panel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = Color.FromArgb(14, 24, 43),
+            Padding = new Padding(18)
+        };
+        rootLayout.Controls.Add(headerPanel, 0, 0);
+
+        var headerLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 1,
+            Margin = new Padding(0)
+        };
+        headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f));
+        headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
+        headerPanel.Controls.Add(headerLayout);
+
+        var brandLayout = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.TopDown,
+            WrapContents = false,
+            AutoScroll = false,
+            Margin = new Padding(0)
+        };
+        headerLayout.Controls.Add(brandLayout, 0, 0);
 
         if (logoImage is not null)
         {
             _logoPicture.Image = logoImage;
-            _logoPicture.Left = 20;
-            _logoPicture.Top = 24;
-            _logoPicture.Width = 72;
-            _logoPicture.Height = 72;
+            _logoPicture.Size = new Size(72, 72);
             _logoPicture.SizeMode = PictureBoxSizeMode.Zoom;
-            headerPanel.Controls.Add(_logoPicture);
+            _logoPicture.Margin = new Padding(0, 0, 0, 10);
+            brandLayout.Controls.Add(_logoPicture);
         }
 
-        var headerLeft = logoImage is not null ? 110 : 20;
-
         _lblAppTitle.Text = _config.AppName;
-        _lblAppTitle.ForeColor = blue;
+        _lblAppTitle.ForeColor = primary;
         _lblAppTitle.Font = new Font("Segoe UI", 20, FontStyle.Bold);
         _lblAppTitle.AutoSize = true;
-        _lblAppTitle.Left = headerLeft;
-        _lblAppTitle.Top = 20;
-        headerPanel.Controls.Add(_lblAppTitle);
+        brandLayout.Controls.Add(_lblAppTitle);
 
         _lblSubtitle.Text = _config.AppSubtitle;
         _lblSubtitle.ForeColor = Color.White;
         _lblSubtitle.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
         _lblSubtitle.AutoSize = true;
-        _lblSubtitle.Left = headerLeft;
-        _lblSubtitle.Top = 54;
-        headerPanel.Controls.Add(_lblSubtitle);
+        brandLayout.Controls.Add(_lblSubtitle);
 
-        _lblAppVersion.Text = "Versão do atualizador: 1.0.0";
-        _lblAppVersion.ForeColor = textGray;
+        _lblAppVersion.Text = "Versao do Atualizador: 1.0.0";
+        _lblAppVersion.ForeColor = mutedText;
         _lblAppVersion.AutoSize = true;
-        _lblAppVersion.Left = headerLeft;
-        _lblAppVersion.Top = 82;
-        headerPanel.Controls.Add(_lblAppVersion);
+        brandLayout.Controls.Add(_lblAppVersion);
 
-        _lblManifestVersion.Text = "Versão do manifesto: desconhecida";
-        _lblManifestVersion.ForeColor = textGray;
+        _lblManifestVersion.Text = "Versao do Manifesto: desconhecida";
+        _lblManifestVersion.ForeColor = mutedText;
         _lblManifestVersion.AutoSize = true;
-        _lblManifestVersion.Left = headerLeft;
-        _lblManifestVersion.Top = 102;
-        headerPanel.Controls.Add(_lblManifestVersion);
+        brandLayout.Controls.Add(_lblManifestVersion);
 
         _lblConnection.Text = "Verificando rede e manifesto...";
         _lblConnection.ForeColor = Color.FromArgb(122, 220, 191);
         _lblConnection.AutoSize = true;
-        _lblConnection.Left = headerLeft;
-        _lblConnection.Top = 124;
-        headerPanel.Controls.Add(_lblConnection);
+        brandLayout.Controls.Add(_lblConnection);
 
         if (heroImage is not null)
         {
             _avatarPicture.Image = heroImage;
-            _avatarPicture.Left = 820;
-            _avatarPicture.Top = 12;
-            _avatarPicture.Width = 100;
-            _avatarPicture.Height = 126;
+            _avatarPicture.Size = new Size(100, 126);
             _avatarPicture.SizeMode = PictureBoxSizeMode.Zoom;
-            headerPanel.Controls.Add(_avatarPicture);
+            _avatarPicture.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            headerLayout.Controls.Add(_avatarPicture, 1, 0);
         }
 
         var dashboardPanel = new Panel
         {
-            Left = 20,
-            Top = 180,
-            Width = 940,
-            Height = 110,
+            Dock = DockStyle.Fill,
             BackColor = Color.Transparent
         };
-        Controls.Add(dashboardPanel);
+        rootLayout.Controls.Add(dashboardPanel, 0, 1);
+
+        var dashboardFlow = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.LeftToRight,
+            WrapContents = false,
+            AutoScroll = false,
+            Margin = new Padding(0),
+            Padding = new Padding(0)
+        };
+        dashboardPanel.Controls.Add(dashboardFlow);
 
         var cardLabels = new[]
         {
             "Instalados",
-            "Atualizações",
-            "Último deploy",
-            "Espaço livre",
+            "Atualizacoes",
+            "Ultimo deploy",
+            "Espaco livre",
             "Status DB",
-            "Conexão"
+            "Conexao"
         };
 
         for (var i = 0; i < cardLabels.Length; i++)
         {
             var card = CreateMetricCard(cardLabels[i]);
-            card.Left = 10 + (i * 150);
-            card.Top = 0;
-            dashboardPanel.Controls.Add(card);
+            card.Margin = new Padding(0, 0, 12, 0);
+            dashboardFlow.Controls.Add(card);
             _dashboardValue[i] = (Label)card.Controls[0];
             _dashboardLabel[i] = (Label)card.Controls[1];
         }
 
         var moduleCard = new Panel
         {
-            Left = 20,
-            Top = 300,
-            Width = 940,
-            Height = 260,
+            Dock = DockStyle.Fill,
             BackColor = cardBackground,
             Padding = new Padding(16)
         };
-        Controls.Add(moduleCard);
+        rootLayout.Controls.Add(moduleCard, 0, 2);
 
-        moduleCard.Controls.Add(new Label
+        var moduleLayout = new TableLayoutPanel
         {
-            Text = "Lista de módulos",
-            ForeColor = blue,
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 3,
+            AutoSize = false,
+            Margin = new Padding(0)
+        };
+        moduleLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        moduleLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+        moduleLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42f));
+        moduleCard.Controls.Add(moduleLayout);
+
+        var moduleTitle = new Label
+        {
+            Text = "Lista de Modulos",
+            ForeColor = primary,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
-            Left = 0,
-            Top = 0
-        });
+            Dock = DockStyle.Top
+        };
+        moduleLayout.Controls.Add(moduleTitle, 0, 0);
 
-        _gridModules.Left = 0;
-        _gridModules.Top = 36;
-        _gridModules.Width = 908;
-        _gridModules.Height = 173;
+        _gridModules.Dock = DockStyle.Fill;
         _gridModules.BackgroundColor = panelBackground;
         _gridModules.BorderStyle = BorderStyle.None;
         _gridModules.EnableHeadersVisualStyles = false;
         _gridModules.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(17, 24, 39);
         _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
         _gridModules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+        _gridModules.ColumnHeadersHeight = 34;
         _gridModules.RowHeadersVisible = false;
         _gridModules.AllowUserToAddRows = false;
         _gridModules.AllowUserToDeleteRows = false;
         _gridModules.AllowUserToResizeRows = false;
         _gridModules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        _gridModules.MultiSelect = false;
         _gridModules.ForeColor = Color.White;
-        _gridModules.RowTemplate.Height = 32;
+        _gridModules.RowTemplate.Height = 34;
         _gridModules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        _gridModules.RowTemplate.DefaultCellStyle.BackColor = Color.FromArgb(16, 22, 37);
+        _gridModules.DefaultCellStyle.BackColor = Color.FromArgb(16, 22, 37);
+        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(12, 18, 29);
+        _gridModules.DefaultCellStyle.ForeColor = Color.White;
+        _gridModules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
+        _gridModules.DefaultCellStyle.SelectionForeColor = Color.White;
+        _gridModules.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+        _gridModules.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
         _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
+        _gridModules.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
         _gridModules.CellValueChanged += (_, _) => UpdateSelectionCount();
-        _gridModules.CurrentCellDirtyStateChanged += (_, _) => { if (_gridModules.IsCurrentCellDirty) _gridModules.CommitEdit(DataGridViewDataErrorContexts.Commit); };
+        _gridModules.CurrentCellDirtyStateChanged += (_, _) =>
+        {
+            if (_gridModules.IsCurrentCellDirty)
+                _gridModules.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        };
 
-        _gridModules.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selecionar", HeaderText = "Selecionar", Width = 40 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 130 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descrição", FillWeight = 170 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "LocalSource", HeaderText = "Origem local", FillWeight = 80 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versão local", FillWeight = 70 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versão disponível", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selecionar", HeaderText = "Selecionar", Width = 45, FillWeight = 20 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 120 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descricao", FillWeight = 220 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "LocalSource", HeaderText = "Origem", FillWeight = 80 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versao local", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versao online", FillWeight = 80 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Tamanho", HeaderText = "Tamanho", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Data", HeaderText = "Data", FillWeight = 70 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Status", FillWeight = 80 });
-        moduleCard.Controls.Add(_gridModules);
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Status", FillWeight = 90 });
+        moduleLayout.Controls.Add(_gridModules, 0, 1);
 
-        ConfigureButton(_btnSelectAll, "Selecionar tudo", 0, 214, 140, 32, panelBackground, Color.White, moduleCard);
-        ConfigureButton(_btnClearAll, "Limpar seleção", 150, 214, 140, 32, panelBackground, Color.White, moduleCard);
+        var moduleActions = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Right,
+            FlowDirection = FlowDirection.LeftToRight,
+            WrapContents = false,
+            AutoSize = true,
+            Margin = new Padding(0)
+        };
+        moduleLayout.Controls.Add(moduleActions, 0, 2);
+
+        ConfigureButton(_btnClearAll, "Limpar selecao", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
+        ConfigureButton(_btnSelectAll, "Selecionar tudo", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
+        _btnClearAll.Margin = new Padding(0, 0, 8, 0);
+        _btnSelectAll.Margin = new Padding(0, 0, 8, 0);
         _btnSelectAll.Click += (_, _) => SetAllSelection(true);
         _btnClearAll.Click += (_, _) => SetAllSelection(false);
 
+        var bottomPanel = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 1,
+            Margin = new Padding(0),
+            Padding = new Padding(0)
+        };
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62f));
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38f));
+        rootLayout.Controls.Add(bottomPanel, 0, 3);
+
         var databaseCard = new Panel
         {
-            Left = 20,
-            Top = 580,
-            Width = 620,
-            Height = 160,
+            Dock = DockStyle.Fill,
             BackColor = cardBackground,
             Padding = new Padding(16)
         };
-        Controls.Add(databaseCard);
+        bottomPanel.Controls.Add(databaseCard, 0, 0);
 
-        databaseCard.Controls.Add(new Label
+        var databaseLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 6,
+            Margin = new Padding(0)
+        };
+        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        databaseLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        databaseCard.Controls.Add(databaseLayout);
+
+        var databaseTitle = new Label
         {
             Text = "Atualizador de Banco",
-            ForeColor = blue,
+            ForeColor = primary,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
-            Left = 0,
-            Top = 0
-        });
+            Dock = DockStyle.Top
+        };
+        databaseLayout.Controls.Add(databaseTitle, 0, 0);
 
-        _rbNoDb.Text = "Não executar";
-        _rbNoDb.Left = 0;
-        _rbNoDb.Top = 30;
-        _rbNoDb.Width = 280;
+        _rbNoDb.Text = "Nao executar";
+        _rbNoDb.AutoSize = true;
         _rbNoDb.ForeColor = Color.White;
         _rbNoDb.Checked = true;
-        databaseCard.Controls.Add(_rbNoDb);
+        databaseLayout.Controls.Add(_rbNoDb, 0, 1);
 
         _rbOnlyLoad.Text = "Apenas carregar arquivos";
-        _rbOnlyLoad.Left = 0;
-        _rbOnlyLoad.Top = 58;
-        _rbOnlyLoad.Width = 280;
+        _rbOnlyLoad.AutoSize = true;
         _rbOnlyLoad.ForeColor = Color.White;
-        databaseCard.Controls.Add(_rbOnlyLoad);
+        databaseLayout.Controls.Add(_rbOnlyLoad, 0, 2);
 
         _rbLoadProcess.Text = "Carregar e processar arquivos";
-        _rbLoadProcess.Left = 0;
-        _rbLoadProcess.Top = 86;
-        _rbLoadProcess.Width = 280;
+        _rbLoadProcess.AutoSize = true;
         _rbLoadProcess.ForeColor = Color.White;
-        databaseCard.Controls.Add(_rbLoadProcess);
+        databaseLayout.Controls.Add(_rbLoadProcess, 0, 3);
 
         _rbLoadProcessClose.Text = "Carregar, processar e fechar";
-        _rbLoadProcessClose.Left = 0;
-        _rbLoadProcessClose.Top = 114;
-        _rbLoadProcessClose.Width = 280;
+        _rbLoadProcessClose.AutoSize = true;
         _rbLoadProcessClose.ForeColor = Color.White;
-        databaseCard.Controls.Add(_rbLoadProcessClose);
+        databaseLayout.Controls.Add(_rbLoadProcessClose, 0, 4);
 
         _lblStatus.Text = "Inicializando...";
         _lblStatus.ForeColor = Color.White;
-        _lblStatus.Left = 0;
-        _lblStatus.Top = 148;
-        _lblStatus.Width = 580;
-        databaseCard.Controls.Add(_lblStatus);
+        _lblStatus.AutoSize = true;
+        _lblStatus.Dock = DockStyle.Top;
+        databaseLayout.Controls.Add(_lblStatus, 0, 5);
 
         var logCard = new Panel
         {
-            Left = 660,
-            Top = 580,
-            Width = 300,
-            Height = 160,
+            Dock = DockStyle.Fill,
             BackColor = cardBackground,
-            Padding = new Padding(12)
+            Padding = new Padding(16)
         };
-        Controls.Add(logCard);
+        bottomPanel.Controls.Add(logCard, 1, 0);
 
-        logCard.Controls.Add(new Label
+        var logTitle = new Label
         {
-            Text = "Live log",
-            ForeColor = blue,
+            Text = "Log em Tempo Real",
+            ForeColor = primary,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
-            Left = 0,
-            Top = 0
-        });
+            Dock = DockStyle.Top
+        };
+        logCard.Controls.Add(logTitle);
 
-        _logConsole.Left = 0;
-        _logConsole.Top = 28;
-        _logConsole.Width = 288;
-        _logConsole.Height = 120;
+        _logConsole.Dock = DockStyle.Fill;
         _logConsole.BackColor = Color.FromArgb(10, 18, 34);
         _logConsole.ForeColor = Color.FromArgb(180, 210, 235);
         _logConsole.BorderStyle = BorderStyle.None;
@@ -339,34 +414,56 @@ public sealed class MainForm : Form
 
         var footerPanel = new Panel
         {
-            Left = 20,
-            Top = 760,
-            Width = 940,
-            Height = 40,
-            BackColor = Color.FromArgb(10, 18, 34)
+            Dock = DockStyle.Fill,
+            BackColor = secondaryCard,
+            Padding = new Padding(16)
         };
-        Controls.Add(footerPanel);
+        rootLayout.Controls.Add(footerPanel, 0, 4);
 
-        _progressTotal.Left = 20;
-        _progressTotal.Top = 12;
-        _progressTotal.Width = 600;
-        _progressTotal.Height = 16;
+        var footerLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 3,
+            RowCount = 1,
+            Margin = new Padding(0)
+        };
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
+        footerPanel.Controls.Add(footerLayout);
+
+        _progressTotal.Dock = DockStyle.Fill;
+        _progressTotal.Height = 18;
         _progressTotal.Minimum = 0;
         _progressTotal.Maximum = 100;
-        footerPanel.Controls.Add(_progressTotal);
+        footerLayout.Controls.Add(_progressTotal, 0, 0);
 
         _lblProgressPercent.Text = "0%";
-        _lblProgressPercent.ForeColor = blue;
+        _lblProgressPercent.ForeColor = primary;
         _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-        _lblProgressPercent.Left = 640;
-        _lblProgressPercent.Top = 10;
-        _lblProgressPercent.Width = 80;
-        footerPanel.Controls.Add(_lblProgressPercent);
+        _lblProgressPercent.AutoSize = true;
+        _lblProgressPercent.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+        footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
 
-        ConfigureButton(_btnRefresh, "Atualizar", 520, 6, 100, 28, panelBackground, Color.White, footerPanel);
-        ConfigureButton(_btnOpenLog, "Abrir log", 630, 6, 100, 28, panelBackground, Color.White, footerPanel);
-        ConfigureButton(_btnClose, "Fechar", 740, 6, 100, 28, panelBackground, Color.White, footerPanel);
-        ConfigureButton(_btnUpdate, "Implantar agora", 850, 6, 100, 28, blue, Color.White, footerPanel);
+        var footerActions = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Right,
+            FlowDirection = FlowDirection.LeftToRight,
+            WrapContents = false,
+            AutoSize = true,
+            Margin = new Padding(0)
+        };
+        footerLayout.Controls.Add(footerActions, 2, 0);
+
+        ConfigureButton(_btnRefresh, "Atualizar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 0, 0, 140, 32, primary, Color.White, footerActions);
+
+        _btnRefresh.Margin = new Padding(0, 0, 8, 0);
+        _btnOpenLog.Margin = new Padding(0, 0, 8, 0);
+        _btnClose.Margin = new Padding(0, 0, 8, 0);
+        _btnUpdate.Margin = new Padding(0, 0, 0, 0);
 
         _btnUpdate.Click += async (_, _) => await RunUpdateAsync();
         _btnClose.Click += (_, _) => Close();
@@ -440,8 +537,8 @@ public sealed class MainForm : Form
 
     private async Task InitializeAsync()
     {
-        SetStatus("Carregando configurações e manifesto...");
-        _lblAppVersion.Text = $"Versão do atualizador: {Application.ProductVersion}";
+        SetStatus("Carregando configuracoes e manifesto...");
+        _lblAppVersion.Text = $"Versao do Atualizador: {Application.ProductVersion}";
         AppendLog("Inicializando o DataSmart Deploy Center...");
 
         _backupService.MigrateRootExecutables();
@@ -450,8 +547,8 @@ public sealed class MainForm : Form
         try
         {
             _manifest = await _manifestService.LoadAsync(_config.ManifestUrl);
-            _lblManifestVersion.Text = $"Manifest version: {(_manifest.Versao ?? "Unknown")}";
-            AppendLog($"Manifest loaded: version {_manifest.Versao}");
+            _lblManifestVersion.Text = $"Versao do Manifesto: {(_manifest.Versao ?? "Desconhecida")}";
+            AppendLog($"Manifesto carregado: versao {_manifest.Versao}");
         }
         catch (Exception ex)
         {
@@ -472,20 +569,20 @@ public sealed class MainForm : Form
         if (update == null)
             return;
 
-        var prompt = $"Uma nova versão do DataSmart Updater está disponível.\n\nNotas:\n{update.Notas}";
+        var prompt = $"Uma nova versao do DataSmart Updater esta disponivel.\n\nNotas:\n{update.Notas}";
         var result = MessageBox.Show(prompt, _config.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Information);
         if (result != DialogResult.Yes)
             return;
 
         if (await _selfUpdateService.PerformUpdateAsync(update))
         {
-            AppendLog("Self-update started. Closing application...");
-            MessageBox.Show("The updater will restart with the latest version.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AppendLog("Autoatualizacao iniciada. Fechando aplicacao...");
+            MessageBox.Show("O atualizador sera reiniciado com a versao mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
         }
         else
         {
-            AppendLog("A autoatualização não pôde ser iniciada.");
+            AppendLog("A autoatualizacao nao pode ser iniciada.");
         }
     }
 
@@ -594,15 +691,15 @@ public sealed class MainForm : Form
         var updates = _modules.Count(m => m.Estado == ModuleUpdateState.UpdateAvailable);
         var history = _historyService.LoadHistory().LastOrDefault();
         var freeSpace = GetDriveFreeSpace(_dataDir);
-        var bancoStatus = _environmentOk ? "Pronto" : "Atenção";
+        var bancoStatus = _environmentOk ? "Pronto" : "Atencao";
         var connectionStatus = _environmentOk ? "Conectado" : "Desconectado";
 
         SetDashboardCard(0, installed.ToString(), "Instalados");
-        SetDashboardCard(1, updates.ToString(), "Atualizações");
-        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Último deploy");
-        SetDashboardCard(3, freeSpace, "Espaço livre");
+        SetDashboardCard(1, updates.ToString(), "Atualizacoes");
+        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Ultimo deploy");
+        SetDashboardCard(3, freeSpace, "Espaco livre");
         SetDashboardCard(4, bancoStatus, "Status DB");
-        SetDashboardCard(5, connectionStatus, "Conexão");
+        SetDashboardCard(5, connectionStatus, "Conexao");
     }
 
     private void SetDashboardCard(int index, string value, string label)
@@ -637,7 +734,7 @@ public sealed class MainForm : Form
 
         if (!_environmentOk)
         {
-            MessageBox.Show("O ambiente não está pronto para atualização. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("O ambiente nao esta pronto para atualizacao. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -664,7 +761,7 @@ public sealed class MainForm : Form
                 await DownloadModuleAsync(module, tempFile, i, selected.Count);
 
                 if (!ValidateDownloadedModule(tempFile, module))
-                    throw new Exception($"Validation failed for {module.Nome}.");
+                throw new Exception($"Validacao falhou para {module.Nome}.");
 
                 ReplaceModuleFile(tempFile, destination);
                 updatedFiles.Add(module.Nome);
@@ -690,18 +787,18 @@ public sealed class MainForm : Form
                 StatusBanco = bancoResult
             });
 
-            AppendLog("Atualização concluída com sucesso.");
-            SetStatus("Process finished successfully.");
+            AppendLog("Atualizacao concluida com sucesso.");
+            SetStatus("Processo finalizado com sucesso.");
             var durationText = elapsed.ToString(@"hh\:mm\:ss");
-            var completedMessage = $"Atualização concluída com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {durationText}\nVelocidade média: {speed}\nBackup: {session}\nLog: {_log.LogFile}";
+            var completedMessage = $"Atualizacao concluida com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {durationText}\nVelocidade media: {speed}\nBackup: {session}\nLog: {_log.LogFile}";
             MessageBox.Show(completedMessage, _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            AppendLog($"Error: {ex.Message}");
+            AppendLog($"Erro: {ex.Message}");
             _log.Error(ex.Message);
             _backupService.RestoreSession(session);
-            var rollbackMessage = $"Update failed.\n\nError: {ex.Message}\n\nRollback applied.\nBackup: {session}\nLog: {_log.LogFile}";
+            var rollbackMessage = $"Atualizacao falhou.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}";
             MessageBox.Show(rollbackMessage, _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
