@@ -112,7 +112,8 @@ public sealed class MainForm : Form
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 95f));
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 35f));
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));
+        // Aumenta a altura do rodapé para evitar corte de botões em resoluções menores
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100f));
         Controls.Add(rootLayout);
 
         var headerPanel = new Panel
@@ -428,6 +429,7 @@ public sealed class MainForm : Form
         };
         rootLayout.Controls.Add(footerPanel, 0, 4);
 
+        // Layout do rodapé com 3 colunas: área principal (progresso), label de % e ações
         var footerLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -436,16 +438,10 @@ public sealed class MainForm : Form
             Margin = new Padding(0),
             Padding = new Padding(0)
         };
-<<<<<<< HEAD
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80f));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
-=======
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         footerLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
->>>>>>> 33d2243 (feat: Ajustar layout e estilos do painel de rodapé na MainForm)
         footerPanel.Controls.Add(footerLayout);
 
         _progressTotal.Dock = DockStyle.Fill;
@@ -458,11 +454,7 @@ public sealed class MainForm : Form
         _lblProgressPercent.ForeColor = primary;
         _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _lblProgressPercent.AutoSize = true;
-<<<<<<< HEAD
-        _lblProgressPercent.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-=======
-        _lblProgressPercent.TextAlign = ContentAlignment.MiddleRight;
->>>>>>> 33d2243 (feat: Ajustar layout e estilos do painel de rodapé na MainForm)
+        _lblProgressPercent.TextAlign = ContentAlignment.MiddleRight; // alinha o texto dentro da célula do TableLayout
         footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
 
         var footerActions = new FlowLayoutPanel
@@ -471,12 +463,8 @@ public sealed class MainForm : Form
             FlowDirection = FlowDirection.LeftToRight,
             WrapContents = false,
             AutoSize = true,
-<<<<<<< HEAD
-            Margin = new Padding(0)
-=======
             Margin = new Padding(0),
             Padding = new Padding(0)
->>>>>>> 33d2243 (feat: Ajustar layout e estilos do painel de rodapé na MainForm)
         };
         footerLayout.Controls.Add(footerActions, 2, 0);
 
