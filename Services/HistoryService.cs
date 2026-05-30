@@ -33,15 +33,15 @@ public sealed class HistoryService
         try
         {
             if (!File.Exists(_historyPath))
-                return Array.Empty<UpdateHistoryEntry>();
+                return [];
 
             var json = File.ReadAllText(_historyPath);
             var entries = JsonSerializer.Deserialize<List<UpdateHistoryEntry>>(json, _options);
-            return entries ?? Array.Empty<UpdateHistoryEntry>();
+            return entries ?? [];
         }
         catch
         {
-            return Array.Empty<UpdateHistoryEntry>();
+            return [];
         }
     }
 }

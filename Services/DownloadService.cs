@@ -2,8 +2,6 @@
 
 using System.Net;
 
-namespace DataSmartUpdater.Services;
-
 public sealed class DownloadService
 {
     private readonly HttpClient _http = new();

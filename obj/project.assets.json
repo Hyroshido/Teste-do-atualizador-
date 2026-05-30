@@ -8,26 +8,23 @@
     "net8.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Joao\\.nuget\\packages\\": {}
+    "C:\\Users\\Renan Marques\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Joao\\Documents\\Projetos\\Teste-do-atualizador-\\DataSmartUpdater.csproj",
+      "projectUniqueName": "C:\\Users\\Renan Marques\\Documents\\Projetos\\Teste-do-atualizador--1\\DataSmartUpdater.csproj",
       "projectName": "DataSmartUpdater",
-      "projectPath": "C:\\Users\\Joao\\Documents\\Projetos\\Teste-do-atualizador-\\DataSmartUpdater.csproj",
-      "packagesPath": "C:\\Users\\Joao\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Joao\\Documents\\Projetos\\Teste-do-atualizador-\\obj\\",
+      "projectPath": "C:\\Users\\Renan Marques\\Documents\\Projetos\\Teste-do-atualizador--1\\DataSmartUpdater.csproj",
+      "packagesPath": "C:\\Users\\Renan Marques\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Renan Marques\\Documents\\Projetos\\Teste-do-atualizador--1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Joao\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Renan Marques\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0-windows"
       ],
-      "sources": {
-        "https://api.nuget.org/v3/index.json": {}
-      },
       "frameworks": {
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",

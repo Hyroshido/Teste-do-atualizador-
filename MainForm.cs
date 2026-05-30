@@ -205,12 +205,12 @@ public sealed class MainForm : Form
 
         var cardLabels = new[]
         {
-            "Modulos Instalados",
-            "Atualizacoes Disponiveis",
-            "Ultima Implantacao",
-            "Espaco Livre",
+            "Módulos Instalados",
+            "Atualizações Disponíveis",
+            "Última Implantação",
+            "Espaço Livre",
             "Status do Banco",
-            "Status da Conexao"
+            "Status da Conexão"
         };
 
         for (var i = 0; i < cardLabels.Length; i++)
@@ -245,7 +245,7 @@ public sealed class MainForm : Form
 
         var moduleTitle = new Label
         {
-            Text = "Lista de Modulos",
+            Text = "Lista de Módulos",
             ForeColor = primary,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
@@ -288,10 +288,10 @@ public sealed class MainForm : Form
 
         _gridModules.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selecionar", HeaderText = "Selecionar", Width = 45, FillWeight = 20 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 120 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descricao", FillWeight = 220 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descrição", FillWeight = 220 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "LocalSource", HeaderText = "Origem", FillWeight = 80 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versao Local", FillWeight = 70 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versao Online", FillWeight = 80 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versão Local", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versão Online", FillWeight = 80 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Tamanho", HeaderText = "Tamanho", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Data", HeaderText = "Data", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Status", FillWeight = 90 });
@@ -307,7 +307,7 @@ public sealed class MainForm : Form
         };
         moduleLayout.Controls.Add(moduleActions, 0, 2);
 
-        ConfigureButton(_btnClearAll, "Limpar selecao", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
+        ConfigureButton(_btnClearAll, "Limpar seleção", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
         ConfigureButton(_btnSelectAll, "Selecionar todos", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
         _btnClearAll.Margin = new Padding(0, 0, 8, 0);
         _btnSelectAll.Margin = new Padding(0, 0, 8, 0);
@@ -359,7 +359,7 @@ public sealed class MainForm : Form
         };
         databaseLayout.Controls.Add(databaseTitle, 0, 0);
 
-        _rbNoDb.Text = "Nao executar";
+        _rbNoDb.Text = "Não executar";
         _rbNoDb.AutoSize = true;
         _rbNoDb.ForeColor = Color.White;
         _rbNoDb.Checked = true;
@@ -537,8 +537,8 @@ public sealed class MainForm : Form
 
     private async Task InitializeAsync()
     {
-        SetStatus("Carregando configuracoes e manifesto...");
-        _lblAppVersion.Text = $"Versao do Atualizador: {Application.ProductVersion}";
+        SetStatus("Carregando configurações e manifesto...");
+        _lblAppVersion.Text = $"Versão do Atualizador: {Application.ProductVersion}";
         AppendLog("Inicializando o DataSmart Deploy Center...");
 
         _backupService.MigrateRootExecutables();
@@ -547,8 +547,8 @@ public sealed class MainForm : Form
         try
         {
             _manifest = await _manifestService.LoadAsync(_config.ManifestUrl);
-            _lblManifestVersion.Text = $"Versao do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
-            AppendLog($"Manifesto carregado: versao {_manifest.Versao}");
+            _lblManifestVersion.Text = $"Versão do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
+            AppendLog($"Manifesto carregado: versão {_manifest.Versao}");
         }
         catch (Exception ex)
         {
@@ -571,20 +571,20 @@ public sealed class MainForm : Form
         if (update == null)
             return;
 
-        var prompt = $"Uma nova versao do DataSmart Updater esta disponivel.\n\nNotas:\n{update.Notas}";
+        var prompt = $"Uma nova versão do DataSmart Updater está disponível.\n\nNotas:\n{update.Notas}";
         var result = MessageBox.Show(prompt, _config.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Information);
         if (result != DialogResult.Yes)
             return;
 
         if (await _selfUpdateService.PerformUpdateAsync(update))
         {
-            AppendLog("Autoatualizacao iniciada. Fechando aplicacao...");
-            MessageBox.Show("O atualizador sera reiniciado com a versao mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AppendLog("Atualização automática iniciada. Fechando aplicação...");
+            MessageBox.Show("O atualizador será reiniciado com a versão mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
         }
         else
         {
-            AppendLog("A autoatualizacao nao pode ser iniciada.");
+            AppendLog("A atualização automática não pode ser iniciada.");
         }
     }
 
@@ -628,7 +628,7 @@ public sealed class MainForm : Form
 
             module.LocalPath = _backupService.FindLocalExePath(module.Nome) ?? string.Empty;
             module.LocalVersion = string.IsNullOrWhiteSpace(module.LocalPath)
-                ? "Nao instalado"
+                ? "Não instalado"
                 : VersionService.GetFileVersion(module.LocalPath);
             module.Estado = DetermineModuleState(module);
             _modules.Add(module);
@@ -696,12 +696,12 @@ public sealed class MainForm : Form
         var bancoStatus = _environmentOk ? "Pronto" : "Atencao";
         var connectionStatus = _environmentOk ? "Conectado" : "Desconectado";
 
-        SetDashboardCard(0, installed.ToString(), "Modulos Instalados");
-        SetDashboardCard(1, updates.ToString(), "Atualizacoes Disponiveis");
-        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Ultima Implantacao");
-        SetDashboardCard(3, freeSpace, "Espaco Livre");
+        SetDashboardCard(0, installed.ToString(), "Módulos Instalados");
+        SetDashboardCard(1, updates.ToString(), "Atualizações Disponíveis");
+        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Última Implantação");
+        SetDashboardCard(3, freeSpace, "Espaço Livre");
         SetDashboardCard(4, bancoStatus, "Status do Banco");
-        SetDashboardCard(5, connectionStatus, "Status da Conexao");
+        SetDashboardCard(5, connectionStatus, "Status da Conexão");
     }
 
     private void SetDashboardCard(int index, string value, string label)
@@ -730,13 +730,13 @@ public sealed class MainForm : Form
         var selected = GetSelectedModules();
         if (selected.Count == 0)
         {
-            MessageBox.Show("Selecione pelo menos um modulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Selecione pelo menos um módulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         if (!_environmentOk)
         {
-            MessageBox.Show("O ambiente nao esta pronto para atualizacao. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("O ambiente não está pronto para atualização. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -755,15 +755,15 @@ public sealed class MainForm : Form
             for (var i = 0; i < selected.Count; i++)
             {
                 var module = selected[i];
-                SetStatus($"Downloading {module.Nome} ({i + 1}/{selected.Count})...");
-                AppendLog($"Downloading {module.Nome}...");
+                SetStatus($"Baixando {module.Nome} ({i + 1}/{selected.Count})...");
+                AppendLog($"Baixando {module.Nome}...");
                 var destination = GetModuleDestinationPath(module.Nome);
                 var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.tmp");
                 _backupService.BackupExe(module.Nome, session);
                 await DownloadModuleAsync(module, tempFile, i, selected.Count);
 
                 if (!ValidateDownloadedModule(tempFile, module))
-                throw new Exception($"Validacao falhou para {module.Nome}.");
+                throw new Exception($"Validação falhou para {module.Nome}.");
 
                 ReplaceModuleFile(tempFile, destination);
                 updatedFiles.Add(module.Nome);
@@ -789,10 +789,10 @@ public sealed class MainForm : Form
                 StatusBanco = bancoResult
             });
 
-            AppendLog("Atualizacao concluida com sucesso.");
+            AppendLog("Atualização concluída com sucesso.");
             SetStatus("Processo finalizado com sucesso.");
             var durationText = elapsed.ToString(@"hh\:mm\:ss");
-            var completedMessage = $"Atualizacao concluida com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {durationText}\nVelocidade media: {speed}\nBackup: {session}\nLog: {_log.LogFile}";
+            var completedMessage = $"Atualização concluída com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {durationText}\nVelocidade média: {speed}\nBackup: {session}\nLog: {_log.LogFile}";
             MessageBox.Show(completedMessage, _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
@@ -800,7 +800,7 @@ public sealed class MainForm : Form
             AppendLog($"Erro: {ex.Message}");
             _log.Error(ex.Message);
             _backupService.RestoreSession(session);
-            var rollbackMessage = $"Atualizacao falhou.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}";
+            var rollbackMessage = $"Atualização falhou.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}";
             MessageBox.Show(rollbackMessage, _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
@@ -817,7 +817,7 @@ public sealed class MainForm : Form
             var overall = (int)((current / (double)total) * 100 + (percent / (double)total));
             _progressTotal.Value = Math.Clamp(overall, 0, 100);
             _lblProgressPercent.Text = $"{overall}%";
-            SetStatus($"Downloading {module.Nome}: {percent}% | Total {overall}%");
+            SetStatus($"Baixando {module.Nome}: {percent}% | Total {overall}%");
         });
 
         await _downloadService.DownloadAsync(module.Url, destination, downloadProgress);
@@ -875,7 +875,7 @@ public sealed class MainForm : Form
         }
         catch
         {
-            MessageBox.Show("Nao foi possivel abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Não foi possível abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 
