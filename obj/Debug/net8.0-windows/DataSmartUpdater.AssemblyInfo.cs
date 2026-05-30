@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DataSmartUpdater")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad5c6d5f8147b00052db5cbf9bbda3bf83e8b75a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a38dc3a4334c45d954bcde17c01d84de1f077deb")]
 [assembly: System.Reflection.AssemblyProductAttribute("DataSmartUpdater")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DataSmartUpdater")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,5 +1,6 @@
 using DataSmartUpdater.Models;
 using DataSmartUpdater.Services;
+using DataSmartUpdater.UI;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -86,12 +87,14 @@ public sealed class MainForm : Form
         BackColor = Color.FromArgb(7, 18, 38);
         Font = new Font("Segoe UI", 9);
 
-        var primary = Color.FromArgb(45, 151, 255);
-        var cardBackground = Color.FromArgb(15, 27, 50);
-        var secondaryCard = Color.FromArgb(19, 33, 63);
-        var panelBackground = Color.FromArgb(10, 18, 38);
-        var mutedText = Color.FromArgb(148, 163, 184);
+        var primary = ModernColors.Primary;
+        var cardBackground = ModernColors.BackgroundCard;
+        var secondaryCard = ModernColors.BackgroundCardSecondary;
+        var panelBackground = ModernColors.BackgroundPanel;
+        var mutedText = ModernColors.TextMuted;
+        var backgroundDark = ModernColors.BackgroundDark;
 
+        BackColor = backgroundDark;
         var imageDir = Path.Combine(AppContext.BaseDirectory, "Imagens");
         var logoImage = LoadLogoImage(imageDir);
         var heroImage = LoadImage(imageDir, "Marcos.png");
@@ -258,8 +261,8 @@ public sealed class MainForm : Form
         _gridModules.BackgroundColor = panelBackground;
         _gridModules.BorderStyle = BorderStyle.None;
         _gridModules.EnableHeadersVisualStyles = false;
-        _gridModules.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(17, 24, 39);
-        _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+        _gridModules.ColumnHeadersDefaultCellStyle.BackColor = ModernColors.GridHeaderBackground;
+        _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = ModernColors.GridHeaderText;
         _gridModules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _gridModules.ColumnHeadersHeight = 34;
         _gridModules.RowHeadersVisible = false;
@@ -268,18 +271,18 @@ public sealed class MainForm : Form
         _gridModules.AllowUserToResizeRows = false;
         _gridModules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         _gridModules.MultiSelect = false;
-        _gridModules.ForeColor = Color.White;
+        _gridModules.ForeColor = ModernColors.TextPrimary;
         _gridModules.RowTemplate.Height = 34;
         _gridModules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        _gridModules.DefaultCellStyle.BackColor = Color.FromArgb(16, 22, 37);
-        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(12, 18, 29);
-        _gridModules.DefaultCellStyle.ForeColor = Color.White;
-        _gridModules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
-        _gridModules.DefaultCellStyle.SelectionForeColor = Color.White;
+        _gridModules.DefaultCellStyle.BackColor = ModernColors.GridRowDefault;
+        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = ModernColors.GridRowAlternate;
+        _gridModules.DefaultCellStyle.ForeColor = ModernColors.TextPrimary;
+        _gridModules.DefaultCellStyle.SelectionBackColor = ModernColors.GridRowSelected;
+        _gridModules.DefaultCellStyle.SelectionForeColor = ModernColors.TextPrimary;
         _gridModules.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
         _gridModules.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-        _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
-        _gridModules.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
+        _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = ModernColors.GridRowSelected;
+        _gridModules.RowTemplate.DefaultCellStyle.SelectionForeColor = ModernColors.TextPrimary;
         _gridModules.CellValueChanged += (_, _) => UpdateSelectionCount();
         _gridModules.CurrentCellDirtyStateChanged += (_, _) =>
         {
@@ -424,16 +427,18 @@ public sealed class MainForm : Form
         var footerLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            ColumnCount = 2,
+            ColumnCount = 3,
             RowCount = 1,
             Margin = new Padding(0)
         };
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         footerPanel.Controls.Add(footerLayout);
 
         _progressTotal.Dock = DockStyle.Fill;
         _progressTotal.Height = 18;
+        _progressTotal.Style = ProgressBarStyle.Continuous;
         _progressTotal.Minimum = 0;
         _progressTotal.Maximum = 100;
         footerLayout.Controls.Add(_progressTotal, 0, 0);
@@ -442,18 +447,19 @@ public sealed class MainForm : Form
         _lblProgressPercent.ForeColor = primary;
         _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _lblProgressPercent.AutoSize = true;
-        _lblProgressPercent.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-        footerLayout.Controls.Add(_lblProgressPercent, 0, 0);
+        _lblProgressPercent.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+        footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
 
         var footerActions = new FlowLayoutPanel
         {
-            Dock = DockStyle.Right,
+            Dock = DockStyle.Fill,
             FlowDirection = FlowDirection.LeftToRight,
             WrapContents = true,
             AutoSize = true,
-            Margin = new Padding(0, 0, 0, 0)
+            Margin = new Padding(0, 0, 0, 0),
+            Anchor = AnchorStyles.Right
         };
-        footerLayout.Controls.Add(footerActions, 1, 0);
+        footerLayout.Controls.Add(footerActions, 2, 0);
 
         ConfigureButton(_btnRefresh, "🔄 Atualizar", 0, 0, 110, 36, panelBackground, Color.White, footerActions);
         ConfigureButton(_btnOpenLog, "📋 Log", 0, 0, 95, 36, panelBackground, Color.White, footerActions);
@@ -491,28 +497,30 @@ public sealed class MainForm : Form
     {
         var card = new Panel
         {
-            Width = 150,
+            Width = 170,
             Height = 110,
-            BackColor = Color.FromArgb(16, 24, 42)
+            BackColor = ModernColors.BackgroundCardSecondary,
+            Padding = new Padding(14),
+            Margin = new Padding(0, 0, 12, 12)
         };
 
         var valueLabel = new Label
         {
             Text = "0",
-            ForeColor = Color.White,
+            ForeColor = ModernColors.Primary,
             Font = new Font("Segoe UI", 16, FontStyle.Bold),
             AutoSize = true,
-            Left = 10,
-            Top = 10
+            Left = 14,
+            Top = 14
         };
 
         var textLabel = new Label
         {
             Text = title,
-            ForeColor = Color.FromArgb(160, 180, 210),
+            ForeColor = ModernColors.TextMuted,
             Font = new Font("Segoe UI", 8.5f, FontStyle.Regular),
             AutoSize = true,
-            Left = 10,
+            Left = 14,
             Top = 52
         };
 
