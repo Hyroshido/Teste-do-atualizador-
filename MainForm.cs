@@ -108,12 +108,18 @@ public sealed class MainForm : Form
             Padding = new Padding(16),
             Margin = new Padding(0)
         };
+        // FIX: Evita que o TableLayoutPanel cresça dinamicamente além da viewport do Form
+        // Explicação: AutoSize deve ficar falso e GrowStyle fixo para impedir que filhos
+        // adicionem linhas/colunas e empurrem o footer para fora da janela.
+        rootLayout.AutoSize = false;
+        rootLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 150f));
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 95f));
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));
         rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 35f));
-        // Aumenta a altura do rodapé para evitar corte de botões em resoluções menores
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100f));
+        // FIX: Define altura absoluta do rodapé para evitar clipping do botão de implantação.
+        // Usamos 60px como altura previsível e compacta.
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));
         Controls.Add(rootLayout);
 
         var headerPanel = new Panel
@@ -214,12 +220,12 @@ public sealed class MainForm : Form
 
         var cardLabels = new[]
         {
-            "Modulos Instalados",
-            "Atualizacoes Disponiveis",
-            "Ultima Implantacao",
-            "Espaco Livre",
+            "Módulos Instalados",
+            "Atualizações Disponíveis",
+            "Última Implantação",
+            "Espaço Livre",
             "Status do Banco",
-            "Status da Conexao"
+            "Status da Conexão"
         };
 
         for (var i = 0; i < cardLabels.Length; i++)
@@ -254,7 +260,7 @@ public sealed class MainForm : Form
 
         var moduleTitle = new Label
         {
-            Text = "Lista de Modulos",
+            Text = "Lista de Módulos",
             ForeColor = primary,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
@@ -401,6 +407,12 @@ public sealed class MainForm : Form
             BackColor = cardBackground,
             Padding = new Padding(16)
         };
+        // FIX: Impede que o painel de logs aumente o layout pai.
+        // Definimos um teto (MaximumSize) e desabilitamos AutoSize para obrigar
+        // o RichTextBox a usar scroll interno em vez de expandir a janela.
+        logCard.AutoSize = false;
+        logCard.MaximumSize = new Size(0, 320); // teto defensivo para logs
+        
         bottomPanel.Controls.Add(logCard, 1, 0);
 
         var logTitle = new Label
@@ -419,6 +431,12 @@ public sealed class MainForm : Form
         _logConsole.BorderStyle = BorderStyle.FixedSingle;
         _logConsole.ReadOnly = true;
         _logConsole.Font = new Font("Consolas", 9);
+        // FIX: Força scroll interno no RichTextBox para evitar que o conteúdo
+        // empurre o painel pai. WordWrap desligado para manter layout das linhas.
+        _logConsole.ScrollBars = RichTextBoxScrollBars.Vertical;
+        _logConsole.WordWrap = false;
+        _logConsole.AutoSize = false;
+        _logConsole.MaximumSize = new Size(0, 300);
         logCard.Controls.Add(_logConsole);
 
         var footerPanel = new Panel
@@ -441,7 +459,9 @@ public sealed class MainForm : Form
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        footerLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+        // FIX: Linha do footer com altura absoluta para garantir que o espaço do footer
+        // seja sempre preservado e não seja empurrado por conteúdo abaixo.
+        footerLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));
         footerPanel.Controls.Add(footerLayout);
 
         _progressTotal.Dock = DockStyle.Fill;
@@ -462,9 +482,13 @@ public sealed class MainForm : Form
             Dock = DockStyle.Right,
             FlowDirection = FlowDirection.LeftToRight,
             WrapContents = false,
-            AutoSize = true,
+            // FIX: Desliga o AutoSize e define altura fixa para evitar que o FlowLayout
+            // aumente verticalmente e empurre o footer para fora da view.
+            AutoSize = false,
             Margin = new Padding(0),
-            Padding = new Padding(0)
+            Padding = new Padding(0),
+            Height = 44,
+            MinimumSize = new Size(240, 44)
         };
         footerLayout.Controls.Add(footerActions, 2, 0);
 
