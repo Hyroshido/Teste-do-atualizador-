@@ -6,8 +6,8 @@
       "descricao": "Modulo de NF-e: emissao, transmissao, consulta e gerenciamento de notas fiscais eletronicas.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartNFe.exe",
       "versao": "2.5.18",
-      "sha256": "",
-      "tamanho": "",
+      "sha256": "5e0e9da6ee5e05826ead86a935e1e527e17d2820438c3c0cf01cdfee8b781319",
+      "tamanho": "6110720",
       "data": "2026-05-29"
     },
     {
@@ -15,8 +15,8 @@
       "descricao": "Modulo de NFS-e: emissao e integracao de notas fiscais de servico.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartNFSe.exe",
       "versao": "2.5.18",
-      "sha256": "",
-      "tamanho": "",
+      "sha256": "bdebae5c4e9874bf038a095a4816536e943c4aefd50b65aaa87d427dcf22914c",
+      "tamanho": "6293504",
       "data": "2026-05-29"
     },
     {
@@ -24,8 +24,8 @@
       "descricao": "Modulo Food: rotinas de restaurante, balcao, delivery e atendimento.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartFood.exe",
       "versao": "2.5.18",
-      "sha256": "",
-      "tamanho": "",
+      "sha256": "110878d015ae1ba008537538d9959afdeaaacf89d8517e700b6c9ce4f43db010",
+      "tamanho": "12770816",
       "data": "2026-05-29"
     },
     {
@@ -33,8 +33,8 @@
       "descricao": "Modulo CT-e: emissao, manutencao e controle de conhecimento de transporte eletronico.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartCTE.exe",
       "versao": "2.5.18",
-      "sha256": "",
-      "tamanho": "",
+      "sha256": "7d1d370215dadb6cce69906b864cbc7a136b29a39e4aa25c73e151503dc0896d",
+      "tamanho": "5265408",
       "data": "2026-05-29"
     },
     {
@@ -42,8 +42,8 @@
       "descricao": "Modulo SPED: geracao, manutencao e validacao de arquivos fiscais.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SPED.exe",
       "versao": "2.5.18",
-      "sha256": "",
-      "tamanho": "",
+      "sha256": "e5ea4c9d808a17a8117176eeeef3de52d0e4d247d393c9c5580eb7cca8cc484f",
+      "tamanho": "11796992",
       "data": "2026-05-29"
     }
   ]

@@ -1,6 +1,5 @@
 using DataSmartUpdater.Models;
 using DataSmartUpdater.Services;
-using DataSmartUpdater.UI;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -43,7 +42,6 @@ public sealed class MainForm : Form
     private readonly Button _btnClearAll = new();
     private readonly Button _btnRefresh = new();
     private readonly Button _btnUpdate = new();
-    private readonly Button _btnUpdateApp = new();
     private readonly Button _btnOpenLog = new();
     private readonly Button _btnClose = new();
 
@@ -72,6 +70,7 @@ public sealed class MainForm : Form
         _selfUpdateService = new SelfUpdateService(_config, _log);
 
         BuildUi();
+        DoubleBuffered = true;
         Shown += async (_, _) => await InitializeAsync();
     }
 
@@ -87,14 +86,12 @@ public sealed class MainForm : Form
         BackColor = Color.FromArgb(7, 18, 38);
         Font = new Font("Segoe UI", 9);
 
-        var primary = ModernColors.Primary;
-        var cardBackground = ModernColors.BackgroundCard;
-        var secondaryCard = ModernColors.BackgroundCardSecondary;
-        var panelBackground = ModernColors.BackgroundPanel;
-        var mutedText = ModernColors.TextMuted;
-        var backgroundDark = ModernColors.BackgroundDark;
+        var primary = Color.FromArgb(45, 151, 255);
+        var cardBackground = Color.FromArgb(15, 27, 50);
+        var secondaryCard = Color.FromArgb(19, 33, 63);
+        var panelBackground = Color.FromArgb(10, 18, 38);
+        var mutedText = Color.FromArgb(148, 163, 184);
 
-        BackColor = backgroundDark;
         var imageDir = Path.Combine(AppContext.BaseDirectory, "Imagens");
         var logoImage = LoadLogoImage(imageDir);
         var heroImage = LoadImage(imageDir, "Marcos.png");
@@ -209,12 +206,12 @@ public sealed class MainForm : Form
 
         var cardLabels = new[]
         {
-            "Módulos Instalados",
-            "Atualizações Disponíveis",
-            "Última Implantação",
-            "Espaço Livre",
+            "Modulos Instalados",
+            "Atualizacoes Disponiveis",
+            "Ultima Implantacao",
+            "Espaco Livre",
             "Status do Banco",
-            "Status da Conexão"
+            "Status da Conexao"
         };
 
         for (var i = 0; i < cardLabels.Length; i++)
@@ -249,7 +246,7 @@ public sealed class MainForm : Form
 
         var moduleTitle = new Label
         {
-            Text = "Lista de Módulos",
+            Text = "Lista de Modulos",
             ForeColor = primary,
             Font = new Font("Segoe UI", 11, FontStyle.Bold),
             AutoSize = true,
@@ -261,8 +258,8 @@ public sealed class MainForm : Form
         _gridModules.BackgroundColor = panelBackground;
         _gridModules.BorderStyle = BorderStyle.None;
         _gridModules.EnableHeadersVisualStyles = false;
-        _gridModules.ColumnHeadersDefaultCellStyle.BackColor = ModernColors.GridHeaderBackground;
-        _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = ModernColors.GridHeaderText;
+        _gridModules.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(17, 24, 39);
+        _gridModules.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
         _gridModules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _gridModules.ColumnHeadersHeight = 34;
         _gridModules.RowHeadersVisible = false;
@@ -271,18 +268,18 @@ public sealed class MainForm : Form
         _gridModules.AllowUserToResizeRows = false;
         _gridModules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         _gridModules.MultiSelect = false;
-        _gridModules.ForeColor = ModernColors.TextPrimary;
+        _gridModules.ForeColor = Color.White;
         _gridModules.RowTemplate.Height = 34;
         _gridModules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        _gridModules.DefaultCellStyle.BackColor = ModernColors.GridRowDefault;
-        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = ModernColors.GridRowAlternate;
-        _gridModules.DefaultCellStyle.ForeColor = ModernColors.TextPrimary;
-        _gridModules.DefaultCellStyle.SelectionBackColor = ModernColors.GridRowSelected;
-        _gridModules.DefaultCellStyle.SelectionForeColor = ModernColors.TextPrimary;
+        _gridModules.DefaultCellStyle.BackColor = Color.FromArgb(16, 22, 37);
+        _gridModules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(12, 18, 29);
+        _gridModules.DefaultCellStyle.ForeColor = Color.White;
+        _gridModules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
+        _gridModules.DefaultCellStyle.SelectionForeColor = Color.White;
         _gridModules.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
         _gridModules.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-        _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = ModernColors.GridRowSelected;
-        _gridModules.RowTemplate.DefaultCellStyle.SelectionForeColor = ModernColors.TextPrimary;
+        _gridModules.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 151, 255);
+        _gridModules.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
         _gridModules.CellValueChanged += (_, _) => UpdateSelectionCount();
         _gridModules.CurrentCellDirtyStateChanged += (_, _) =>
         {
@@ -292,10 +289,10 @@ public sealed class MainForm : Form
 
         _gridModules.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selecionar", HeaderText = "Selecionar", Width = 45, FillWeight = 20 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 120 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descrição", FillWeight = 220 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descricao", FillWeight = 220 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "LocalSource", HeaderText = "Origem", FillWeight = 80 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versão Local", FillWeight = 70 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versão Online", FillWeight = 80 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versao Local", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versao Online", FillWeight = 80 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Tamanho", HeaderText = "Tamanho", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Data", HeaderText = "Data", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Status", FillWeight = 90 });
@@ -363,7 +360,7 @@ public sealed class MainForm : Form
         };
         databaseLayout.Controls.Add(databaseTitle, 0, 0);
 
-        _rbNoDb.Text = "Não executar";
+        _rbNoDb.Text = "Nao executar";
         _rbNoDb.AutoSize = true;
         _rbNoDb.ForeColor = Color.White;
         _rbNoDb.Checked = true;
@@ -431,14 +428,13 @@ public sealed class MainForm : Form
             RowCount = 1,
             Margin = new Padding(0)
         };
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
         footerPanel.Controls.Add(footerLayout);
 
         _progressTotal.Dock = DockStyle.Fill;
         _progressTotal.Height = 18;
-        _progressTotal.Style = ProgressBarStyle.Continuous;
         _progressTotal.Minimum = 0;
         _progressTotal.Maximum = 100;
         footerLayout.Controls.Add(_progressTotal, 0, 0);
@@ -447,37 +443,33 @@ public sealed class MainForm : Form
         _lblProgressPercent.ForeColor = primary;
         _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _lblProgressPercent.AutoSize = true;
-        _lblProgressPercent.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+        _lblProgressPercent.Anchor = AnchorStyles.Left | AnchorStyles.Top;
         footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
 
         var footerActions = new FlowLayoutPanel
         {
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.Right,
             FlowDirection = FlowDirection.LeftToRight,
-            WrapContents = true,
+            WrapContents = false,
             AutoSize = true,
-            Margin = new Padding(0, 0, 0, 0),
-            Anchor = AnchorStyles.Right
+            Margin = new Padding(0)
         };
         footerLayout.Controls.Add(footerActions, 2, 0);
 
-        ConfigureButton(_btnRefresh, "🔄 Atualizar", 0, 0, 110, 36, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnOpenLog, "📋 Log", 0, 0, 95, 36, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnUpdateApp, "⬆️ App", 0, 0, 85, 36, Color.FromArgb(100, 100, 100), Color.White, footerActions);
-        ConfigureButton(_btnClose, "✕ Fechar", 0, 0, 100, 36, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnUpdate, "▶ IMPLANTAR", 0, 0, 150, 36, primary, Color.White, footerActions);
+        ConfigureButton(_btnRefresh, "Verificar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnUpdate, "Implantar", 0, 0, 140, 32, primary, Color.White, footerActions);
 
-        _btnRefresh.Margin = new Padding(4, 0, 4, 0);
-        _btnOpenLog.Margin = new Padding(4, 0, 4, 0);
-        _btnUpdateApp.Margin = new Padding(4, 0, 4, 0);
-        _btnClose.Margin = new Padding(4, 0, 4, 0);
-        _btnUpdate.Margin = new Padding(4, 0, 0, 0);
+        _btnRefresh.Margin = new Padding(0, 0, 8, 0);
+        _btnOpenLog.Margin = new Padding(0, 0, 8, 0);
+        _btnClose.Margin = new Padding(0, 0, 8, 0);
+        _btnUpdate.Margin = new Padding(0, 0, 0, 0);
 
         _btnUpdate.Click += async (_, _) => await RunUpdateAsync();
         _btnClose.Click += (_, _) => Close();
         _btnRefresh.Click += async (_, _) => await InitializeAsync();
         _btnOpenLog.Click += (_, _) => OpenLogFile();
-        _btnUpdateApp.Click += async (_, _) => await CheckAndUpdateAppAsync();
     }
 
     private Panel CreateCard(Rectangle bounds, Color backColor)
@@ -497,30 +489,28 @@ public sealed class MainForm : Form
     {
         var card = new Panel
         {
-            Width = 170,
+            Width = 150,
             Height = 110,
-            BackColor = ModernColors.BackgroundCardSecondary,
-            Padding = new Padding(14),
-            Margin = new Padding(0, 0, 12, 12)
+            BackColor = Color.FromArgb(16, 24, 42)
         };
 
         var valueLabel = new Label
         {
             Text = "0",
-            ForeColor = ModernColors.Primary,
+            ForeColor = Color.White,
             Font = new Font("Segoe UI", 16, FontStyle.Bold),
             AutoSize = true,
-            Left = 14,
-            Top = 14
+            Left = 10,
+            Top = 10
         };
 
         var textLabel = new Label
         {
             Text = title,
-            ForeColor = ModernColors.TextMuted,
+            ForeColor = Color.FromArgb(160, 180, 210),
             Font = new Font("Segoe UI", 8.5f, FontStyle.Regular),
             AutoSize = true,
-            Left = 14,
+            Left = 10,
             Top = 52
         };
 
@@ -539,19 +529,44 @@ public sealed class MainForm : Form
         btn.BackColor = back;
         btn.ForeColor = fore;
         btn.FlatStyle = FlatStyle.Flat;
-        btn.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-        btn.FlatAppearance.BorderColor = Color.FromArgb(56, 189, 248);
-        btn.FlatAppearance.BorderSize = 2;
-        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Light(back, 0.2f);
-        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(back, 0.2f);
+        btn.FlatAppearance.BorderSize = 0;
+        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Light(back);
+        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(back);
         btn.Cursor = Cursors.Hand;
+        btn.Padding = new Padding(6, 4, 6, 4);
         parent.Controls.Add(btn);
+        try
+        {
+            // Aplicar cantos arredondados para botões principais
+            SetRoundedButton(btn, 6);
+        }
+        catch { }
+    }
+
+    private void SetRoundedButton(Button btn, int radius)
+    {
+        var rect = new Rectangle(0, 0, btn.Width, btn.Height);
+        var path = new System.Drawing.Drawing2D.GraphicsPath();
+        var arc = new Rectangle(rect.Location, new Size(radius, radius));
+        // top-left
+        path.AddArc(arc, 180, 90);
+        // top-right
+        arc.X = rect.Right - radius;
+        path.AddArc(arc, 270, 90);
+        // bottom-right
+        arc.Y = rect.Bottom - radius;
+        path.AddArc(arc, 0, 90);
+        // bottom-left
+        arc.X = rect.Left;
+        path.AddArc(arc, 90, 90);
+        path.CloseFigure();
+        btn.Region = new Region(path);
     }
 
     private async Task InitializeAsync()
     {
-        SetStatus("Carregando configurações e manifesto...");
-        _lblAppVersion.Text = $"Versão do Atualizador: {Application.ProductVersion}";
+        SetStatus("Carregando configuracoes e manifesto...");
+        _lblAppVersion.Text = $"Versao do Atualizador: {Application.ProductVersion}";
         AppendLog("Inicializando o DataSmart Deploy Center...");
 
         _backupService.MigrateRootExecutables();
@@ -560,8 +575,8 @@ public sealed class MainForm : Form
         try
         {
             _manifest = await _manifestService.LoadAsync(_config.ManifestUrl);
-            _lblManifestVersion.Text = $"Versão do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
-            AppendLog($"Manifesto carregado: versão {_manifest.Versao}");
+            _lblManifestVersion.Text = $"Versao do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
+            AppendLog($"Manifesto carregado: versao {_manifest.Versao}");
         }
         catch (Exception ex)
         {
@@ -584,20 +599,20 @@ public sealed class MainForm : Form
         if (update == null)
             return;
 
-        var prompt = $"Uma nova versão do DataSmart Updater está disponível.\n\nNotas:\n{update.Notas}";
+        var prompt = $"Uma nova versao do DataSmart Updater esta disponivel.\n\nNotas:\n{update.Notas}";
         var result = MessageBox.Show(prompt, _config.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Information);
         if (result != DialogResult.Yes)
             return;
 
         if (await _selfUpdateService.PerformUpdateAsync(update))
         {
-            AppendLog("Atualização automática iniciada. Fechando aplicação...");
-            MessageBox.Show("O atualizador será reiniciado com a versão mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AppendLog("Autoatualizacao iniciada. Fechando aplicacao...");
+            MessageBox.Show("O atualizador sera reiniciado com a versao mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
         }
         else
         {
-            AppendLog("A atualização automática não pode ser iniciada.");
+            AppendLog("A autoatualizacao nao pode ser iniciada.");
         }
     }
 
@@ -621,7 +636,7 @@ public sealed class MainForm : Form
         SetStatus("Ambiente validado com sucesso.");
     }
 
-    private Task PopulateModulesAsync()
+    private async Task PopulateModulesAsync()
     {
         _gridModules.Rows.Clear();
         _modules.Clear();
@@ -641,7 +656,7 @@ public sealed class MainForm : Form
 
             module.LocalPath = _backupService.FindLocalExePath(module.Nome) ?? string.Empty;
             module.LocalVersion = string.IsNullOrWhiteSpace(module.LocalPath)
-                ? "Não instalado"
+                ? "Nao instalado"
                 : VersionService.GetFileVersion(module.LocalPath);
             module.Estado = DetermineModuleState(module);
             _modules.Add(module);
@@ -649,8 +664,6 @@ public sealed class MainForm : Form
             var rowIndex = _gridModules.Rows.Add(false, module.Nome, module.Descricao, module.LocalSource, module.LocalVersion, module.VersaoDisponivel, module.TamanhoText, module.DataText, module.StatusText);
             SetRowStatusStyle(_gridModules.Rows[rowIndex], module.Estado);
         }
-
-        return Task.CompletedTask;
     }
 
     private ModuleUpdateState DetermineModuleState(ModuleInfo module)
@@ -711,12 +724,12 @@ public sealed class MainForm : Form
         var bancoStatus = _environmentOk ? "Pronto" : "Atencao";
         var connectionStatus = _environmentOk ? "Conectado" : "Desconectado";
 
-        SetDashboardCard(0, installed.ToString(), "Módulos Instalados");
-        SetDashboardCard(1, updates.ToString(), "Atualizações Disponíveis");
-        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Última Implantação");
-        SetDashboardCard(3, freeSpace, "Espaço Livre");
+        SetDashboardCard(0, installed.ToString(), "Modulos Instalados");
+        SetDashboardCard(1, updates.ToString(), "Atualizacoes Disponiveis");
+        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Ultima Implantacao");
+        SetDashboardCard(3, freeSpace, "Espaco Livre");
         SetDashboardCard(4, bancoStatus, "Status do Banco");
-        SetDashboardCard(5, connectionStatus, "Status da Conexão");
+        SetDashboardCard(5, connectionStatus, "Status da Conexao");
     }
 
     private void SetDashboardCard(int index, string value, string label)
@@ -745,13 +758,13 @@ public sealed class MainForm : Form
         var selected = GetSelectedModules();
         if (selected.Count == 0)
         {
-            MessageBox.Show("Selecione pelo menos um módulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Selecione pelo menos um modulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         if (!_environmentOk)
         {
-            MessageBox.Show("O ambiente não está pronto para atualização. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("O ambiente nao esta pronto para atualizacao. Verifique o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -770,15 +783,15 @@ public sealed class MainForm : Form
             for (var i = 0; i < selected.Count; i++)
             {
                 var module = selected[i];
-                SetStatus($"Baixando {module.Nome} ({i + 1}/{selected.Count})...");
-                AppendLog($"Baixando {module.Nome}...");
+                SetStatus($"Downloading {module.Nome} ({i + 1}/{selected.Count})...");
+                AppendLog($"Downloading {module.Nome}...");
                 var destination = GetModuleDestinationPath(module.Nome);
                 var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.tmp");
                 _backupService.BackupExe(module.Nome, session);
                 await DownloadModuleAsync(module, tempFile, i, selected.Count);
 
                 if (!ValidateDownloadedModule(tempFile, module))
-                throw new Exception($"Validação falhou para {module.Nome}.");
+                throw new Exception($"Validacao falhou para {module.Nome}.");
 
                 ReplaceModuleFile(tempFile, destination);
                 updatedFiles.Add(module.Nome);
@@ -804,10 +817,10 @@ public sealed class MainForm : Form
                 StatusBanco = bancoResult
             });
 
-            AppendLog("Atualização concluída com sucesso.");
+            AppendLog("Atualizacao concluida com sucesso.");
             SetStatus("Processo finalizado com sucesso.");
             var durationText = elapsed.ToString(@"hh\:mm\:ss");
-            var completedMessage = $"Atualização concluída com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {durationText}\nVelocidade média: {speed}\nBackup: {session}\nLog: {_log.LogFile}";
+            var completedMessage = $"Atualizacao concluida com sucesso.\n\nArquivos atualizados:\n- {string.Join("\n- ", updatedFiles)}\n\nTempo total: {durationText}\nVelocidade media: {speed}\nBackup: {session}\nLog: {_log.LogFile}";
             MessageBox.Show(completedMessage, _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
@@ -815,7 +828,7 @@ public sealed class MainForm : Form
             AppendLog($"Erro: {ex.Message}");
             _log.Error(ex.Message);
             _backupService.RestoreSession(session);
-            var rollbackMessage = $"Atualização falhou.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}";
+            var rollbackMessage = $"Atualizacao falhou.\n\nErro: {ex.Message}\n\nRollback aplicado.\nBackup: {session}\nLog: {_log.LogFile}";
             MessageBox.Show(rollbackMessage, _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
@@ -832,7 +845,7 @@ public sealed class MainForm : Form
             var overall = (int)((current / (double)total) * 100 + (percent / (double)total));
             _progressTotal.Value = Math.Clamp(overall, 0, 100);
             _lblProgressPercent.Text = $"{overall}%";
-            SetStatus($"Baixando {module.Nome}: {percent}% | Total {overall}%");
+            SetStatus($"Downloading {module.Nome}: {percent}% | Total {overall}%");
         });
 
         await _downloadService.DownloadAsync(module.Url, destination, downloadProgress);
@@ -885,12 +898,36 @@ public sealed class MainForm : Form
     {
         try
         {
-            if (File.Exists(_log.LogFile))
-                Process.Start("notepad.exe", _log.LogFile);
+            if (!File.Exists(_log.LogFile))
+            {
+                MessageBox.Show("Arquivo de log nao encontrado.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (OperatingSystem.IsWindows())
+            {
+                Process.Start(new ProcessStartInfo("notepad.exe", _log.LogFile) { UseShellExecute = true });
+                return;
+            }
+
+            if (OperatingSystem.IsLinux())
+            {
+                Process.Start(new ProcessStartInfo("xdg-open", _log.LogFile) { UseShellExecute = true });
+                return;
+            }
+
+            if (OperatingSystem.IsMacOS())
+            {
+                Process.Start(new ProcessStartInfo("open", _log.LogFile) { UseShellExecute = true });
+                return;
+            }
+
+            // fallback
+            Process.Start(new ProcessStartInfo { FileName = _log.LogFile, UseShellExecute = true });
         }
         catch
         {
-            MessageBox.Show("Não foi possível abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Nao foi possivel abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 
@@ -910,47 +947,5 @@ public sealed class MainForm : Form
     private static Image? LoadLogoImage(string baseDir)
     {
         return LoadImage(baseDir, "logo-datasmart_ext.png") ?? LoadImage(baseDir, "logo-datasmart.png");
-    }
-
-    private async Task CheckAndUpdateAppAsync()
-    {
-        _btnUpdateApp.Enabled = false;
-        SetStatus("Verificando atualizações da aplicação...");
-        AppendLog("Verificando versão mais recente do DataSmartUpdater...");
-
-        var update = await _selfUpdateService.CheckForUpdateAsync();
-        if (update == null)
-        {
-            MessageBox.Show("Sua aplicação já está na versão mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            SetStatus("Aplicação atualizada.");
-            _btnUpdateApp.Enabled = true;
-            return;
-        }
-
-        var prompt = $"Uma nova versão do DataSmart Updater está disponível.\n\nVersão atual: {Application.ProductVersion}\nNova versão: {update.Versao}\n\nNotas:\n{update.Notas}\n\nDeseja atualizar agora?";
-        var result = MessageBox.Show(prompt, _config.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-        if (result != DialogResult.Yes)
-        {
-            _btnUpdateApp.Enabled = true;
-            return;
-        }
-
-        SetStatus("Baixando atualização da aplicação...");
-        AppendLog("Iniciando download da versão mais recente...");
-
-        if (await _selfUpdateService.PerformUpdateAsync(update))
-        {
-            AppendLog("Atualização baixada e verificada com sucesso.");
-            SetStatus("Aplicação será reiniciada com a versão mais recente.");
-            MessageBox.Show("O atualizador será reiniciado com a versão mais recente em breve.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Application.Exit();
-        }
-        else
-        {
-            AppendLog("Falha ao baixar a atualização da aplicação.");
-            MessageBox.Show("Não foi possível completar a atualização. Consulte o log para mais detalhes.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            _btnUpdateApp.Enabled = true;
-        }
     }
 }
