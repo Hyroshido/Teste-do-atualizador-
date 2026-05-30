@@ -77,8 +77,8 @@ public sealed class MainForm : Form
     private void BuildUi()
     {
         Text = _config.AppName;
-        this.MinimumSize = new Size(1024, 720);
-        this.Size = new Size(1024, 768);
+        this.MinimumSize = new Size(1100, 740);
+        this.Size = new Size(1100, 768);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -118,11 +118,11 @@ public sealed class MainForm : Form
         rootLayout.Dock = DockStyle.Fill;
 
         rootLayout.RowStyles.Clear();
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 160f)); // Linha 0: Header Espaçoso (Previne corte do título/subtítulo)
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 110f)); // Linha 1: Cards Superiores (Espaço total garantido)
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 55f));   // Linha 2: Grid de Módulos (Se ajusta ao centro)
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));   // Linha 3: Split Inferior (Logs + Banco)
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 70f));  // Linha 4: RODAPÉ BLINDADO (Nunca sai da tela)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 130f)); // Linha 0: Header Area (DataSmart Title)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 120f)); // Linha 1: Metric Cards Container (Espaço amplo)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));   // Linha 2: Central Grid (Modules DataGridView)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));   // Linha 3: Split Inferior (Logs + Banco)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 70f));  // Linha 4: RODAPÉ BLINDADO (Garante altura para os botões)
         Controls.Add(rootLayout);
 
         var headerPanel = new Panel
@@ -210,16 +210,19 @@ public sealed class MainForm : Form
         };
         rootLayout.Controls.Add(dashboardPanel, 0, 1);
 
-        var dashboardFlow = new FlowLayoutPanel
+        var cardsLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            FlowDirection = FlowDirection.LeftToRight,
-            WrapContents = false,
-            AutoScroll = false,
+            ColumnCount = 6,
+            RowCount = 1,
             Margin = new Padding(0),
-            Padding = new Padding(0)
+            Padding = new Padding(0),
+            AutoSize = false
         };
-        dashboardPanel.Controls.Add(dashboardFlow);
+        for (var i = 0; i < 6; i++)
+            cardsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66f));
+        cardsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+        dashboardPanel.Controls.Add(cardsLayout);
 
         var cardLabels = new[]
         {
@@ -235,10 +238,12 @@ public sealed class MainForm : Form
         {
             var card = CreateMetricCard(cardLabels[i]);
             card.Margin = new Padding(0, 0, 12, 0);
-            dashboardFlow.Controls.Add(card);
+            cardsLayout.Controls.Add(card, i, 0);
             _dashboardValue[i] = (Label)card.Controls[0];
             _dashboardLabel[i] = (Label)card.Controls[1];
         }
+        cardsLayout.ResumeLayout(false);
+        cardsLayout.PerformLayout();
 
         var moduleCard = new Panel
         {
@@ -382,6 +387,7 @@ public sealed class MainForm : Form
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
             AutoScroll = true,
+            BackColor = Color.White,
             Margin = new Padding(0),
             Padding = new Padding(0)
         };
@@ -393,11 +399,12 @@ public sealed class MainForm : Form
             if (rb != null)
             {
                 rb.AutoSize = true;
-                rb.MinimumSize = new Size(280, 24);
+                rb.MinimumSize = new Size(300, 26);
                 rb.MaximumSize = new Size(300, 0);
-                rb.Margin = new Padding(10, 8, 10, 8);
+                rb.ForeColor = Color.FromArgb(30, 30, 30);
+                rb.BackColor = Color.Transparent;
+                rb.Margin = new Padding(12, 6, 12, 6);
                 rb.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-                rb.ForeColor = Color.White;
             }
         }
 
@@ -418,7 +425,7 @@ public sealed class MainForm : Form
         bancoPanel.PerformLayout();
 
         _lblStatus.Text = "Inicializando...";
-        _lblStatus.ForeColor = Color.White;
+        _lblStatus.ForeColor = Color.FromArgb(30, 30, 30);
         _lblStatus.AutoSize = true;
         _lblStatus.Dock = DockStyle.Top;
         databaseLayout.Controls.Add(_lblStatus, 0, 2);
@@ -486,7 +493,7 @@ public sealed class MainForm : Form
             WrapContents = false
         };
         _progressTotal.Dock = DockStyle.Fill;
-        _progressTotal.Height = 18;
+        _progressTotal.Height = 20;
         _progressTotal.Minimum = 0;
         _progressTotal.Maximum = 100;
         progressWrapper.Controls.Add(_progressTotal);
@@ -503,37 +510,53 @@ public sealed class MainForm : Form
         var buttonGrid = new TableLayoutPanel
         {
             Dock = DockStyle.Right,
-            Width = 520,
-            Height = 40,
+            Width = 540,
+            Height = 42,
             ColumnCount = 4,
             RowCount = 1
         };
         buttonGrid.ColumnStyles.Clear();
-        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
-        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
-        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
-        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130f));
+        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135f));
+        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135f));
+        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135f));
+        buttonGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135f));
 
-        ConfigureButton(_btnUpdate, "Implantar", 0, 0, 120, 36, primary, Color.White, buttonGrid);
-        ConfigureButton(_btnClose, "Fechar", 0, 0, 120, 36, panelBackground, SystemColors.ControlText, buttonGrid);
-        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 120, 36, panelBackground, SystemColors.ControlText, buttonGrid);
-        ConfigureButton(_btnRefresh, "Verificar", 0, 0, 120, 36, panelBackground, SystemColors.ControlText, buttonGrid);
-
-        _btnUpdate.Size = new Size(120, 36);
+        _btnUpdate.Text = "Implantar";
+        _btnUpdate.BackColor = Color.FromArgb(0, 120, 212);
+        _btnUpdate.ForeColor = Color.White;
+        _btnUpdate.Size = new Size(125, 36);
         _btnUpdate.Dock = DockStyle.Fill;
         _btnUpdate.AutoSize = false;
+        _btnUpdate.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 
-        _btnClose.Size = new Size(120, 36);
+        _btnClose.Text = "Fechar";
+        _btnClose.BackColor = SystemColors.Control;
+        _btnClose.ForeColor = Color.Black;
+        _btnClose.Size = new Size(125, 36);
         _btnClose.Dock = DockStyle.Fill;
         _btnClose.AutoSize = false;
+        _btnClose.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 
-        _btnOpenLog.Size = new Size(120, 36);
+        _btnOpenLog.Text = "Abrir log";
+        _btnOpenLog.BackColor = SystemColors.Control;
+        _btnOpenLog.ForeColor = Color.Black;
+        _btnOpenLog.Size = new Size(125, 36);
         _btnOpenLog.Dock = DockStyle.Fill;
         _btnOpenLog.AutoSize = false;
+        _btnOpenLog.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 
-        _btnRefresh.Size = new Size(120, 36);
+        _btnRefresh.Text = "Verificar";
+        _btnRefresh.BackColor = SystemColors.Control;
+        _btnRefresh.ForeColor = Color.Black;
+        _btnRefresh.Size = new Size(125, 36);
         _btnRefresh.Dock = DockStyle.Fill;
         _btnRefresh.AutoSize = false;
+        _btnRefresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+
+        buttonGrid.Controls.Add(_btnUpdate, 0, 0);
+        buttonGrid.Controls.Add(_btnClose, 1, 0);
+        buttonGrid.Controls.Add(_btnOpenLog, 2, 0);
+        buttonGrid.Controls.Add(_btnRefresh, 3, 0);
 
         footerTable.Controls.Add(buttonGrid, 1, 0);
         footerPanel.Controls.Add(footerTable);
