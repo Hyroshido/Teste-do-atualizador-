@@ -108,18 +108,18 @@ public sealed class MainForm : Form
             Padding = new Padding(16),
             Margin = new Padding(0)
         };
-        // FIX: Evita que o TableLayoutPanel cresça dinamicamente além da viewport do Form
-        // Explicação: AutoSize deve ficar falso e GrowStyle fixo para impedir que filhos
-        // adicionem linhas/colunas e empurrem o footer para fora da janela.
+        // ==========================================================================
+        // TRECHO DE CORREÇÃO UNIFICADO - DESIGN DEFENSIVO WINDOWS FORMS
+        // ==========================================================================
+        // STEP 1: FORCE STRICT TABLELAYOUTPANEL RESPONSIVE PROPORTIONS
         rootLayout.AutoSize = false;
         rootLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 150f));
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 95f));
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 35f));
-        // FIX: Define altura absoluta do rodapé para evitar clipping do botão de implantação.
-        // Usamos 60px como altura previsível e compacta.
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60f));
+        rootLayout.RowStyles.Clear();
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 140f)); // Header
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 90f));  // Cards
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 60f));   // Grid Módulos
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 40f));   // Logs e Banco
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 55f));  // Footer Fixo
         Controls.Add(rootLayout);
 
         var headerPanel = new Panel
@@ -303,7 +303,7 @@ public sealed class MainForm : Form
 
         _gridModules.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selecionar", HeaderText = "Selecionar", Width = 45, FillWeight = 20 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 120 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descricao", FillWeight = 220 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descrição", FillWeight = 220 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "LocalSource", HeaderText = "Origem", FillWeight = 80 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versao Local", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versao Online", FillWeight = 80 });
@@ -353,12 +353,9 @@ public sealed class MainForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 1,
-            RowCount = 6,
+            RowCount = 3,
             Margin = new Padding(0)
         };
-        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         databaseLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
         databaseLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -374,32 +371,44 @@ public sealed class MainForm : Form
         };
         databaseLayout.Controls.Add(databaseTitle, 0, 0);
 
-        _rbNoDb.Text = "Nao executar";
+        // STEP 2: REFACTOR DATABASE CONTAINER FLOW & ENFORCE RADIOBUTTON AUTOSIZE
+        var bancoPanel = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.TopDown,
+            WrapContents = false,
+            AutoScroll = true,
+            Margin = new Padding(0),
+            Padding = new Padding(0)
+        };
+        databaseLayout.Controls.Add(bancoPanel, 0, 1);
+
+        _rbNoDb.Text = "Não executar";
         _rbNoDb.AutoSize = true;
         _rbNoDb.ForeColor = Color.White;
         _rbNoDb.Checked = true;
-        databaseLayout.Controls.Add(_rbNoDb, 0, 1);
+        bancoPanel.Controls.Add(_rbNoDb);
 
         _rbOnlyLoad.Text = "Apenas carregar arquivos";
         _rbOnlyLoad.AutoSize = true;
         _rbOnlyLoad.ForeColor = Color.White;
-        databaseLayout.Controls.Add(_rbOnlyLoad, 0, 2);
+        bancoPanel.Controls.Add(_rbOnlyLoad);
 
         _rbLoadProcess.Text = "Carregar e processar arquivos";
         _rbLoadProcess.AutoSize = true;
         _rbLoadProcess.ForeColor = Color.White;
-        databaseLayout.Controls.Add(_rbLoadProcess, 0, 3);
+        bancoPanel.Controls.Add(_rbLoadProcess);
 
         _rbLoadProcessClose.Text = "Carregar, processar e fechar";
         _rbLoadProcessClose.AutoSize = true;
         _rbLoadProcessClose.ForeColor = Color.White;
-        databaseLayout.Controls.Add(_rbLoadProcessClose, 0, 4);
+        bancoPanel.Controls.Add(_rbLoadProcessClose);
 
         _lblStatus.Text = "Inicializando...";
         _lblStatus.ForeColor = Color.White;
         _lblStatus.AutoSize = true;
         _lblStatus.Dock = DockStyle.Top;
-        databaseLayout.Controls.Add(_lblStatus, 0, 5);
+        databaseLayout.Controls.Add(_lblStatus, 0, 2);
 
         var logCard = new Panel
         {
@@ -477,25 +486,24 @@ public sealed class MainForm : Form
         _lblProgressPercent.TextAlign = ContentAlignment.MiddleRight; // alinha o texto dentro da célula do TableLayout
         footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
 
+        // STEP 3: RESURRECT FOOTER ACTIONS AND THE "IMPLANTAR" BUTTON
         var footerActions = new FlowLayoutPanel
         {
-            Dock = DockStyle.Right,
-            FlowDirection = FlowDirection.LeftToRight,
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.RightToLeft,
             WrapContents = false,
-            // FIX: Desliga o AutoSize e define altura fixa para evitar que o FlowLayout
-            // aumente verticalmente e empurre o footer para fora da view.
-            AutoSize = false,
+            AutoSize = true,
             Margin = new Padding(0),
-            Padding = new Padding(0),
-            Height = 44,
-            MinimumSize = new Size(240, 44)
+            Padding = new Padding(0)
         };
         footerLayout.Controls.Add(footerActions, 2, 0);
 
         ConfigureButton(_btnRefresh, "Verificar", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
         ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
         ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, SystemColors.ControlText, footerActions);
-        ConfigureButton(_btnUpdate, "Implantar", 0, 0, 140, 32, primary, Color.White, footerActions);
+        ConfigureButton(_btnUpdate, "Implantar", 0, 0, 130, 32, primary, Color.White, footerActions);
+        _btnUpdate.Size = new Size(130, 32);
+        _btnUpdate.AutoSize = false;
 
         _btnRefresh.Margin = new Padding(0, 0, 8, 0);
         _btnOpenLog.Margin = new Padding(0, 0, 8, 0);
