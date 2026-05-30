@@ -15,19 +15,19 @@ public sealed class ModuleInfo
     public ModuleUpdateState Estado { get; set; } = ModuleUpdateState.Unknown;
 
     public string LocalSource => string.IsNullOrWhiteSpace(LocalPath)
-        ? "Não instalado"
+        ? "Nao instalado"
         : LocalPath.Contains("\\EXE\\", StringComparison.OrdinalIgnoreCase)
             ? "EXE"
             : "Raiz";
 
-    public string VersaoDisponivel => string.IsNullOrWhiteSpace(Versao) ? "Desconhecida" : Versao;
+    public string VersaoDisponivel => string.IsNullOrWhiteSpace(Versao) ? "Desconhecido" : Versao;
     public string TamanhoText => TamanhoBytes > 0 ? FormatBytes(TamanhoBytes) : "Desconhecido";
     public string DataText => string.IsNullOrWhiteSpace(Data) ? "-" : Data;
     public string StatusText => Estado switch
     {
         ModuleUpdateState.UpToDate => "Atualizado",
-        ModuleUpdateState.UpdateAvailable => "Atualização disponível",
-        ModuleUpdateState.NotInstalled => "Não instalado",
+        ModuleUpdateState.UpdateAvailable => "Atualizacao disponivel",
+        ModuleUpdateState.NotInstalled => "Nao instalado",
         ModuleUpdateState.Error => "Erro",
         _ => "Desconhecido"
     };

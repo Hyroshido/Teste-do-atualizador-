@@ -4,8 +4,8 @@ namespace DataSmartUpdater;
 
 public sealed class AppConfig
 {
-    public string AppName { get; set; } = "Data Smart Deploy Center";
-    public string AppSubtitle { get; set; } = "Plataforma corporativa de atualização automática";
+    public string AppName { get; set; } = "DataSmart Deploy Center";
+    public string AppSubtitle { get; set; } = "Central Inteligente de Atualizacao e Implantacao";
     public string DefaultInstallPath { get; set; } = @"C:\DataSmart";
     public string ManifestUrl { get; set; } = "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/manifest.json";
     public string BackupRoot { get; set; } = "Backups";

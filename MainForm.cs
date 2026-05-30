@@ -166,7 +166,7 @@ public sealed class MainForm : Form
         _lblAppVersion.AutoSize = true;
         brandLayout.Controls.Add(_lblAppVersion);
 
-        _lblManifestVersion.Text = "Versao do Manifesto: desconhecida";
+        _lblManifestVersion.Text = "Versao do Manifest: desconhecida";
         _lblManifestVersion.ForeColor = mutedText;
         _lblManifestVersion.AutoSize = true;
         brandLayout.Controls.Add(_lblManifestVersion);
@@ -205,12 +205,12 @@ public sealed class MainForm : Form
 
         var cardLabels = new[]
         {
-            "Instalados",
-            "Atualizacoes",
-            "Ultimo deploy",
-            "Espaco livre",
-            "Status DB",
-            "Conexao"
+            "Modulos Instalados",
+            "Atualizacoes Disponiveis",
+            "Ultima Implantacao",
+            "Espaco Livre",
+            "Status do Banco",
+            "Status da Conexao"
         };
 
         for (var i = 0; i < cardLabels.Length; i++)
@@ -290,8 +290,8 @@ public sealed class MainForm : Form
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Nome", HeaderText = "Nome", FillWeight = 120 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Descricao", HeaderText = "Descricao", FillWeight = 220 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "LocalSource", HeaderText = "Origem", FillWeight = 80 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versao local", FillWeight = 70 });
-        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versao online", FillWeight = 80 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoAtual", HeaderText = "Versao Local", FillWeight = 70 });
+        _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "VersaoDisponivel", HeaderText = "Versao Online", FillWeight = 80 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Tamanho", HeaderText = "Tamanho", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Data", HeaderText = "Data", FillWeight = 70 });
         _gridModules.Columns.Add(new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Status", FillWeight = 90 });
@@ -308,7 +308,7 @@ public sealed class MainForm : Form
         moduleLayout.Controls.Add(moduleActions, 0, 2);
 
         ConfigureButton(_btnClearAll, "Limpar selecao", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
-        ConfigureButton(_btnSelectAll, "Selecionar tudo", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
+        ConfigureButton(_btnSelectAll, "Selecionar todos", 0, 0, 120, 32, panelBackground, Color.White, moduleActions);
         _btnClearAll.Margin = new Padding(0, 0, 8, 0);
         _btnSelectAll.Margin = new Padding(0, 0, 8, 0);
         _btnSelectAll.Click += (_, _) => SetAllSelection(true);
@@ -547,7 +547,7 @@ public sealed class MainForm : Form
         try
         {
             _manifest = await _manifestService.LoadAsync(_config.ManifestUrl);
-            _lblManifestVersion.Text = $"Versao do Manifesto: {(_manifest.Versao ?? "Desconhecida")}";
+            _lblManifestVersion.Text = $"Versao do Manifest: {(_manifest.Versao ?? "Desconhecida")}";
             AppendLog($"Manifesto carregado: versao {_manifest.Versao}");
         }
         catch (Exception ex)
@@ -559,8 +559,10 @@ public sealed class MainForm : Form
 
         await PopulateModulesAsync();
         await RunPreflightAsync();
+        if (_environmentOk)
+            _lblConnection.Text = "Online - Pronto para atualizar seu ambiente.";
         RefreshMetrics();
-        SetStatus("Pronto para implantar.");
+        SetStatus("Pronto para atualizar seu ambiente.");
     }
 
     private async Task CheckForSelfUpdateAsync()
@@ -626,7 +628,7 @@ public sealed class MainForm : Form
 
             module.LocalPath = _backupService.FindLocalExePath(module.Nome) ?? string.Empty;
             module.LocalVersion = string.IsNullOrWhiteSpace(module.LocalPath)
-                ? "Não instalado"
+                ? "Nao instalado"
                 : VersionService.GetFileVersion(module.LocalPath);
             module.Estado = DetermineModuleState(module);
             _modules.Add(module);
@@ -694,12 +696,12 @@ public sealed class MainForm : Form
         var bancoStatus = _environmentOk ? "Pronto" : "Atencao";
         var connectionStatus = _environmentOk ? "Conectado" : "Desconectado";
 
-        SetDashboardCard(0, installed.ToString(), "Instalados");
-        SetDashboardCard(1, updates.ToString(), "Atualizacoes");
-        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Ultimo deploy");
-        SetDashboardCard(3, freeSpace, "Espaco livre");
-        SetDashboardCard(4, bancoStatus, "Status DB");
-        SetDashboardCard(5, connectionStatus, "Conexao");
+        SetDashboardCard(0, installed.ToString(), "Modulos Instalados");
+        SetDashboardCard(1, updates.ToString(), "Atualizacoes Disponiveis");
+        SetDashboardCard(2, history != null ? history.DataHora.ToString("dd/MM/yyyy HH:mm") : "Nenhum", "Ultima Implantacao");
+        SetDashboardCard(3, freeSpace, "Espaco Livre");
+        SetDashboardCard(4, bancoStatus, "Status do Banco");
+        SetDashboardCard(5, connectionStatus, "Status da Conexao");
     }
 
     private void SetDashboardCard(int index, string value, string label)
@@ -728,7 +730,7 @@ public sealed class MainForm : Form
         var selected = GetSelectedModules();
         if (selected.Count == 0)
         {
-            MessageBox.Show("Selecione pelo menos um módulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Selecione pelo menos um modulo.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -873,7 +875,7 @@ public sealed class MainForm : Form
         }
         catch
         {
-            MessageBox.Show("Não foi possível abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Nao foi possivel abrir o log.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 

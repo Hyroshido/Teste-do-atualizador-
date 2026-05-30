@@ -10,8 +10,8 @@ public sealed class SplashForm : Form
     private readonly List<string> _messages = new()
     {
         "Inicializando ambiente...",
-        "Validando configurações...",
-        "Verificando atualizações...",
+        "Validando configuracoes...",
+        "Verificando atualizacoes...",
         "Conectando ao servidor..."
     };
     private int _currentMessage;
@@ -27,7 +27,7 @@ public sealed class SplashForm : Form
 
         var logo = new Label
         {
-            Text = "DATA SMART DEPLOY CENTER",
+            Text = "DATASMART DEPLOY CENTER",
             ForeColor = Color.FromArgb(56, 189, 248),
             Font = new Font("Segoe UI", 18, FontStyle.Bold),
             AutoSize = true,
@@ -38,7 +38,7 @@ public sealed class SplashForm : Form
 
         var subtitle = new Label
         {
-            Text = "Central Inteligente de Atualização e Implantação",
+            Text = "Central Inteligente de Atualizacao e Implantacao",
             ForeColor = Color.White,
             Font = new Font("Segoe UI", 10, FontStyle.Regular),
             AutoSize = true,
@@ -69,7 +69,7 @@ public sealed class SplashForm : Form
 
         var footer = new Label
         {
-            Text = "Preparando a Central Inteligente de Implantação...",
+            Text = "Preparando a Central Inteligente de Implantacao...",
             ForeColor = Color.FromArgb(120, 140, 170),
             Font = new Font("Segoe UI", 9, FontStyle.Regular),
             AutoSize = true,

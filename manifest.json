@@ -3,7 +3,7 @@
   "arquivos": [
     {
       "nome": "SmartNFe.exe",
-      "descricao": "Módulo de NF-e: emissão, transmissão, consulta e gerenciamento de notas fiscais eletrônicas.",
+      "descricao": "Modulo de NF-e: emissao, transmissao, consulta e gerenciamento de notas fiscais eletronicas.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartNFe.exe",
       "versao": "2.5.18",
       "sha256": "",
@@ -12,7 +12,7 @@
     },
     {
       "nome": "SmartNFSe.exe",
-      "descricao": "Módulo de NFS-e: emissão e integração de notas fiscais de serviço.",
+      "descricao": "Modulo de NFS-e: emissao e integracao de notas fiscais de servico.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartNFSe.exe",
       "versao": "2.5.18",
       "sha256": "",
@@ -21,7 +21,7 @@
     },
     {
       "nome": "SmartFood.exe",
-      "descricao": "Módulo Food: rotinas de restaurante, balcão, delivery e atendimento.",
+      "descricao": "Modulo Food: rotinas de restaurante, balcao, delivery e atendimento.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartFood.exe",
       "versao": "2.5.18",
       "sha256": "",
@@ -30,7 +30,7 @@
     },
     {
       "nome": "SmartCTE.exe",
-      "descricao": "Módulo CT-e: emissão, manutenção e controle de conhecimento de transporte eletrônico.",
+      "descricao": "Modulo CT-e: emissao, manutencao e controle de conhecimento de transporte eletronico.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SmartCTE.exe",
       "versao": "2.5.18",
       "sha256": "",
@@ -39,7 +39,7 @@
     },
     {
       "nome": "SPED.exe",
-      "descricao": "Módulo SPED: geração, manutenção e validação de arquivos fiscais.",
+      "descricao": "Modulo SPED: geracao, manutencao e validacao de arquivos fiscais.",
       "url": "https://raw.githubusercontent.com/Hyroshido/Teste-do-atualizador-/main/EXE/SPED.exe",
       "versao": "2.5.18",
       "sha256": "",
