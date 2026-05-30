@@ -42,6 +42,7 @@ public sealed class MainForm : Form
     private readonly Button _btnClearAll = new();
     private readonly Button _btnRefresh = new();
     private readonly Button _btnUpdate = new();
+    private readonly Button _btnUpdateApp = new();
     private readonly Button _btnOpenLog = new();
     private readonly Button _btnClose = new();
 
@@ -423,13 +424,12 @@ public sealed class MainForm : Form
         var footerLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            ColumnCount = 3,
+            ColumnCount = 2,
             RowCount = 1,
             Margin = new Padding(0)
         };
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80f));
-        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+        footerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         footerPanel.Controls.Add(footerLayout);
 
         _progressTotal.Dock = DockStyle.Fill;
@@ -443,32 +443,35 @@ public sealed class MainForm : Form
         _lblProgressPercent.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         _lblProgressPercent.AutoSize = true;
         _lblProgressPercent.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-        footerLayout.Controls.Add(_lblProgressPercent, 1, 0);
+        footerLayout.Controls.Add(_lblProgressPercent, 0, 0);
 
         var footerActions = new FlowLayoutPanel
         {
             Dock = DockStyle.Right,
             FlowDirection = FlowDirection.LeftToRight,
-            WrapContents = false,
+            WrapContents = true,
             AutoSize = true,
-            Margin = new Padding(0)
+            Margin = new Padding(0, 0, 0, 0)
         };
-        footerLayout.Controls.Add(footerActions, 2, 0);
+        footerLayout.Controls.Add(footerActions, 1, 0);
 
-        ConfigureButton(_btnRefresh, "Atualizar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnOpenLog, "Abrir log", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnClose, "Fechar", 0, 0, 100, 32, panelBackground, Color.White, footerActions);
-        ConfigureButton(_btnUpdate, "IMPLANTAR AGORA", 0, 0, 140, 32, primary, Color.White, footerActions);
+        ConfigureButton(_btnRefresh, "🔄 Atualizar", 0, 0, 110, 36, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnOpenLog, "📋 Log", 0, 0, 95, 36, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnUpdateApp, "⬆️ App", 0, 0, 85, 36, Color.FromArgb(100, 100, 100), Color.White, footerActions);
+        ConfigureButton(_btnClose, "✕ Fechar", 0, 0, 100, 36, panelBackground, Color.White, footerActions);
+        ConfigureButton(_btnUpdate, "▶ IMPLANTAR", 0, 0, 150, 36, primary, Color.White, footerActions);
 
-        _btnRefresh.Margin = new Padding(0, 0, 8, 0);
-        _btnOpenLog.Margin = new Padding(0, 0, 8, 0);
-        _btnClose.Margin = new Padding(0, 0, 8, 0);
-        _btnUpdate.Margin = new Padding(0, 0, 0, 0);
+        _btnRefresh.Margin = new Padding(4, 0, 4, 0);
+        _btnOpenLog.Margin = new Padding(4, 0, 4, 0);
+        _btnUpdateApp.Margin = new Padding(4, 0, 4, 0);
+        _btnClose.Margin = new Padding(4, 0, 4, 0);
+        _btnUpdate.Margin = new Padding(4, 0, 0, 0);
 
         _btnUpdate.Click += async (_, _) => await RunUpdateAsync();
         _btnClose.Click += (_, _) => Close();
         _btnRefresh.Click += async (_, _) => await InitializeAsync();
         _btnOpenLog.Click += (_, _) => OpenLogFile();
+        _btnUpdateApp.Click += async (_, _) => await CheckAndUpdateAppAsync();
     }
 
     private Panel CreateCard(Rectangle bounds, Color backColor)
@@ -528,10 +531,12 @@ public sealed class MainForm : Form
         btn.BackColor = back;
         btn.ForeColor = fore;
         btn.FlatStyle = FlatStyle.Flat;
+        btn.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         btn.FlatAppearance.BorderColor = Color.FromArgb(56, 189, 248);
-        btn.FlatAppearance.BorderSize = 1;
-        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Light(back);
-        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(back);
+        btn.FlatAppearance.BorderSize = 2;
+        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Light(back, 0.2f);
+        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(back, 0.2f);
+        btn.Cursor = Cursors.Hand;
         parent.Controls.Add(btn);
     }
 
@@ -895,5 +900,47 @@ public sealed class MainForm : Form
     private static Image? LoadLogoImage(string baseDir)
     {
         return LoadImage(baseDir, "logo-datasmart_ext.png") ?? LoadImage(baseDir, "logo-datasmart.png");
+    }
+
+    private async Task CheckAndUpdateAppAsync()
+    {
+        _btnUpdateApp.Enabled = false;
+        SetStatus("Verificando atualizações da aplicação...");
+        AppendLog("Verificando versão mais recente do DataSmartUpdater...");
+
+        var update = await _selfUpdateService.CheckForUpdateAsync();
+        if (update == null)
+        {
+            MessageBox.Show("Sua aplicação já está na versão mais recente.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SetStatus("Aplicação atualizada.");
+            _btnUpdateApp.Enabled = true;
+            return;
+        }
+
+        var prompt = $"Uma nova versão do DataSmart Updater está disponível.\n\nVersão atual: {Application.ProductVersion}\nNova versão: {update.Versao}\n\nNotas:\n{update.Notas}\n\nDeseja atualizar agora?";
+        var result = MessageBox.Show(prompt, _config.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+        if (result != DialogResult.Yes)
+        {
+            _btnUpdateApp.Enabled = true;
+            return;
+        }
+
+        SetStatus("Baixando atualização da aplicação...");
+        AppendLog("Iniciando download da versão mais recente...");
+
+        if (await _selfUpdateService.PerformUpdateAsync(update))
+        {
+            AppendLog("Atualização baixada e verificada com sucesso.");
+            SetStatus("Aplicação será reiniciada com a versão mais recente.");
+            MessageBox.Show("O atualizador será reiniciado com a versão mais recente em breve.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Application.Exit();
+        }
+        else
+        {
+            AppendLog("Falha ao baixar a atualização da aplicação.");
+            MessageBox.Show("Não foi possível completar a atualização. Consulte o log para mais detalhes.", _config.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _btnUpdateApp.Enabled = true;
+        }
     }
 }
