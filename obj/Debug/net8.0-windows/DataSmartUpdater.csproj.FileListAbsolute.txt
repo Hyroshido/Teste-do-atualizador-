@@ -3,3 +3,22 @@ C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\
 C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.AssemblyInfo.cs
 C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.csproj.CoreCompileInputs.cache
 C:\Users\Joao\Documents\Projetos\Teste-do-atualizador-\obj\Debug\net8.0-windows\DataSmartUpdater.sourcelink.json
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\Imagens\logo-datasmart-new.svg
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\Imagens\logo-datasmart.svg
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\Imagens\logo-datasmart_ext.png
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\Imagens\Marcos.png
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\DataSmartUpdater.exe
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\DataSmartUpdater.deps.json
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\DataSmartUpdater.runtimeconfig.json
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\DataSmartUpdater.dll
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\bin\Debug\net8.0-windows\DataSmartUpdater.pdb
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.AssemblyInfoInputs.cache
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.AssemblyInfo.cs
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.csproj.CoreCompileInputs.cache
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.sourcelink.json
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.dll
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\refint\DataSmartUpdater.dll
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.pdb
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\DataSmartUpdater.genruntimeconfig.cache
+C:\Users\Renan Marques\Documents\Projetos\Teste-do-atualizador--1\obj\Debug\net8.0-windows\ref\DataSmartUpdater.dll

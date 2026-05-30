@@ -613,7 +613,7 @@ public sealed class MainForm : Form
         SetStatus("Ambiente validado com sucesso.");
     }
 
-    private async Task PopulateModulesAsync()
+    private Task PopulateModulesAsync()
     {
         _gridModules.Rows.Clear();
         _modules.Clear();
@@ -641,6 +641,8 @@ public sealed class MainForm : Form
             var rowIndex = _gridModules.Rows.Add(false, module.Nome, module.Descricao, module.LocalSource, module.LocalVersion, module.VersaoDisponivel, module.TamanhoText, module.DataText, module.StatusText);
             SetRowStatusStyle(_gridModules.Rows[rowIndex], module.Estado);
         }
+
+        return Task.CompletedTask;
     }
 
     private ModuleUpdateState DetermineModuleState(ModuleInfo module)

@@ -113,7 +113,7 @@ public static class PathService
                 try
                 {
                     dynamic shortcut = shell.CreateShortcut(link);
-                    string target = shortcut.TargetPath;
+                    string? target = shortcut.TargetPath;
 
                     if (string.IsNullOrWhiteSpace(target) || !target.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                         continue;
@@ -144,12 +144,12 @@ public static class PathService
             using var browser = new FolderBrowserDialog
             {
                 Description = "Select the folder where DataSmart is installed.",
-                SelectedPath = !string.IsNullOrWhiteSpace(fallbackPath) ? fallbackPath : KnownDataSmartFolders[0],
+                SelectedPath = !string.IsNullOrWhiteSpace(fallbackPath) ? fallbackPath! : KnownDataSmartFolders[0],
                 ShowNewFolderButton = false
             };
 
             var result = browser.ShowDialog();
-            if (result == DialogResult.OK && TryLocatePath(browser.SelectedPath, out var selectedPath))
+            if (result == DialogResult.OK && TryLocatePath(browser.SelectedPath ?? string.Empty, out var selectedPath))
                 return selectedPath;
         }
         catch

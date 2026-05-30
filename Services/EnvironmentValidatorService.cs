@@ -21,7 +21,7 @@ public sealed class EnvironmentValidatorService
         _dataDir = dataDir;
     }
 
-    public async Task<EnvironmentValidatorResult> ValidateAsync(ManifestFile manifest)
+    public async Task<EnvironmentValidatorResult> ValidateAsync(ManifestFile? manifest)
     {
         var result = new EnvironmentValidatorResult { Sucesso = true };
 
@@ -55,7 +55,7 @@ public sealed class EnvironmentValidatorService
             result.Mensagens.Add("Manifest inválido ou vazio.");
         }
 
-        foreach (var item in manifest.Arquivos)
+        foreach (var item in manifest?.Arquivos ?? Enumerable.Empty<ManifestItem>())
         {
             if (string.IsNullOrWhiteSpace(item.Nome) || string.IsNullOrWhiteSpace(item.Url))
             {

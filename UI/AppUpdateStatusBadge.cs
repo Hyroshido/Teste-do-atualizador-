@@ -10,9 +10,9 @@ public enum UpdateStatus
 
 public class AppUpdateStatusBadge : Panel
 {
-    private Label _statusLabel;
-    private Label _dateLabel;
-    private Label _iconLabel;
+    private Label _statusLabel = null!;
+    private Label _dateLabel = null!;
+    private Label _iconLabel = null!;
     private UpdateStatus _currentStatus = UpdateStatus.Checking;
     private DateTime _lastCheckTime = DateTime.Now;
 
