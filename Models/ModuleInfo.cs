@@ -15,10 +15,10 @@ public sealed class ModuleInfo
     public ModuleUpdateState Estado { get; set; } = ModuleUpdateState.Unknown;
 
     public string LocalSource => string.IsNullOrWhiteSpace(LocalPath)
-        ? "Not installed"
+        ? "Não instalado"
         : LocalPath.Contains("\\EXE\\", StringComparison.OrdinalIgnoreCase)
             ? "EXE"
-            : "Root";
+            : "Raiz";
 
     public string VersaoDisponivel => string.IsNullOrWhiteSpace(Versao) ? "Desconhecida" : Versao;
     public string TamanhoText => TamanhoBytes > 0 ? FormatBytes(TamanhoBytes) : "Desconhecido";

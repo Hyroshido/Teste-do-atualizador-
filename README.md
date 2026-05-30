@@ -5,26 +5,26 @@
 ![Status](https://img.shields.io/badge/Status-Enterprise-blue)
 ![License](https://img.shields.io/badge/License-Internal-lightgrey)
 
-## 📌 Overview
+## 📌 Visão Geral
 
-`DataSmart Deploy Center` is the new Windows Forms deployment engine for DataSmart clients. It loads a GitHub manifest, downloads module executables into a structured `EXE` folder, performs safe backups, migrates legacy root executables, and automates the internal `Atualizador de Banco de Dados.exe` flow.
+`DataSmart Deploy Center` é o motor de implantação Windows Forms para clientes DataSmart. Ele carrega um manifesto do GitHub, baixa módulos em um diretório `EXE`, faz backups seguros, migra executáveis legados da raiz e automatiza o fluxo interno do `Atualizador de Banco de Dados.exe`.
 
-This tool also supports self-updating the updater itself from a dedicated `updater-manifest.json` release manifest.
+O aplicativo também suporta autoatualização do próprio `DataSmartUpdater.exe` por meio de um manifesto dedicado `updater-manifest.json`.
 
-## ✨ Key Features
+## ✨ Funcionalidades Principais
 
-- 🌐 GitHub-based module updates using `manifest.json`
-- 📦 Organized `EXE` folder deployment
-- 🔁 Legacy root executable migration support
-- 💾 Automatic `COMERCIAL.DAT` backup before deployment
-- 🛡️ Safe update validation with SHA256 support
-- 🧩 Clear module selection and update status
-- ⚙️ Database updater automation and optional closing
-- 📜 Live log console and persistent log files
-- 🔄 Self-update for `DataSmartUpdater.exe`
-- 🧠 Smart `DataSmart` path detection and configuration
+- 🌐 Atualização de módulos via GitHub usando `manifest.json`
+- 📦 Implantação organizada no diretório `EXE`
+- 🔁 Migração segura de executáveis legados da raiz para `EXE`
+- 💾 Backup automático de `COMERCIAL.DAT` antes da implantação
+- 🛡️ Validação de download com SHA256 e tamanho mínimo
+- 🧩 Seleção clara de módulos e status de atualização
+- ⚙️ Automação do atualizador de banco de dados com opção de fechar
+- 📜 Console de log ao vivo e arquivos de log persistentes
+- 🔄 Autoatualização do `DataSmartUpdater.exe`
+- 🧠 Detecção inteligente do caminho do DataSmart e configuração persistente
 
-## 🗂️ Project Structure
+## 🗂️ Estrutura do Projeto
 
 ```
 DataSmartUpdater/
@@ -55,7 +55,7 @@ DataSmartUpdater/
 └── README.md
 ```
 
-## 🖥️ Client Machine Structure
+## 🖥️ Estrutura do Cliente
 
 ```
 C:\DataSmart
@@ -74,88 +74,88 @@ C:\DataSmart
 │       └── appsettings.json
 ├── Atualizador de Banco de Dados.exe
 ├── COMERCIAL.DAT
-└── other DataSmart files
+└── outros arquivos do DataSmart
 ```
 
-## 🚀 How the Update Flow Works
+## 🚀 Fluxo de Atualização
 
-1. The updater loads `C:\DataSmart\Backup\Config\appsettings.json`.
-2. If the DataSmart installation path is invalid, it searches known paths and desktop shortcuts.
-3. The updater loads `manifest.json` from GitHub.
-4. Modules are displayed with local source, local version, available version, and update status.
-5. Selected modules are backed up, downloaded, validated, and deployed to `C:\DataSmart\EXE`.
-6. The internal database updater is launched and optionally processed.
-7. Logs and history are persisted under `C:\DataSmart\Backup`.
+1. O atualizador carrega `C:\DataSmart\Backup\Config\appsettings.json`.
+2. Se o caminho do DataSmart estiver inválido, ele procura caminhos conhecidos e atalhos na área de trabalho.
+3. O atualizador carrega `manifest.json` do GitHub.
+4. Os módulos são exibidos com origem local, versão local, versão disponível e status de atualização.
+5. Os módulos selecionados são copiados em backup, baixados, validados e implantados em `C:\DataSmart\EXE`.
+6. O atualizador interno de banco de dados é aberto e processado conforme configurado.
+7. Logs e histórico são gravados em `C:\DataSmart\Backup`.
 
-## 📦 How to Publish a New Module Version
+## 📦 Publicar Nova Versão de Módulo
 
-1. Place the new executable inside the repository `EXE/` folder.
-2. Update `manifest.json` with the new version and GitHub raw URL.
-3. Commit and push the changes.
-4. The client will download the module from the new manifest path.
+1. Coloque o novo executável no diretório `EXE/` do repositório.
+2. Atualize `manifest.json` com a versão nova e a URL raw do GitHub.
+3. Faça commit e envie as alterações.
+4. O cliente fará download do módulo a partir do novo caminho do manifesto.
 
-## 🔁 How to Publish a New DataSmartUpdater.exe Version
+## 🔁 Publicar Nova Versão do DataSmartUpdater.exe
 
-1. Publish the new `DataSmartUpdater.exe` build.
-2. Upload it into the repository `publish/` folder.
-3. Update `updater-manifest.json` with the new version, URL, and release notes.
-4. Clients will be prompted to self-update when they start the updater.
+1. Gere o novo build de `DataSmartUpdater.exe`.
+2. Faça upload para o diretório `publish/` do repositório.
+3. Atualize `updater-manifest.json` com a versão, URL e notas de release.
+4. Os clientes receberão a notificação de autoatualização ao iniciar o updater.
 
-## 🛠️ Build
+## 🛠️ Compilar
 
 ```bash
 dotnet build -c Release
 ```
 
-## 📤 Publish Single EXE
+## 📤 Publicar EXE Único
 
 ```bash
 dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:EnableCompressionInSingleFile=true
 ```
 
-## 📍 What to Deliver to the Client
+## 📍 Entrega ao Cliente
 
-Deliver only:
+Entregue apenas:
 
 - `DataSmartUpdater.exe`
 
-The updater manages module downloads and deployment using GitHub manifests and the client-side `C:\DataSmart` layout.
+O atualizador gerencia o download e a implantação dos módulos usando os manifestos GitHub e a estrutura local `C:\DataSmart`.
 
 ## 🧾 Logs
 
-Logs are written to:
+Os logs são gravados em:
 
 - `C:\DataSmart\Backup\Logs`
 
-## 🔐 Security
+## 🔐 Segurança
 
-The updater now includes:
+O atualizador inclui:
 
-- SHA256 validation support for downloads
-- File size validation before deployment
-- Temporary download staging before replacement
-- Safe self-update via helper script
-- Legacy executable migration with logging
+- Validação SHA256 de downloads
+- Validação de tamanho mínimo antes da implantação
+- Estágio temporário de download antes da substituição
+- Autoatualização segura via script auxiliar
+- Migração de executáveis legados com log de evento
 
-## 🧯 Troubleshooting
+## 🧯 Solução de Problemas
 
-- HTTP 404: Verify the GitHub raw URL and case-sensitive `EXE` folder path.
-- No internet: the updater will show a manifest load error and continue safely.
-- File in use: close the running DataSmart modules before deploying.
-- GitHub unavailable: retry later.
-- DataSmart folder not found: choose the installation folder when prompted.
-- Database updater button not found: the updater logs a friendly warning and leaves the updater open.
-- Self-update failed: the current executable stays intact.
+- HTTP 404: verifique a URL raw do GitHub e o caminho sensível a maiúsculas `EXE`.
+- Sem internet: o atualizador exibirá falha no manifesto e continuará com segurança.
+- Arquivo em uso: feche os módulos DataSmart antes de implantar.
+- GitHub indisponível: tente novamente mais tarde.
+- Pasta DataSmart não encontrada: selecione a pasta quando solicitado.
+- Botão do atualizador de banco não encontrado: o atualizador registra aviso e mantém a janela aberta.
+- Autoatualização falhou: o executável atual permanece intacto.
 
 ## 🧭 Roadmap
 
-- Code signing for all binaries
-- CDN distribution for faster downloads
-- Incremental update patches
-- Web dashboard for release tracking
-- Release channels and silent mode
-- Internal telemetry dashboard
+- Assinatura de código para todos os binários
+- CDN para downloads mais rápidos
+- Patches de atualização incrementais
+- Dashboard web para gerenciamento de releases
+- Canais de release e modo silencioso
+- Dashboard de telemetria interna
 
-## 👤 Maintainer
+## 👤 Mantenedor
 
-DataSmart Support / Internal IT
+DataSmart Support / TI Interno
