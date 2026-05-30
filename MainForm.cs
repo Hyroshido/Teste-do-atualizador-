@@ -77,9 +77,8 @@ public sealed class MainForm : Form
     private void BuildUi()
     {
         Text = _config.AppName;
-        Width = 980;
-        Height = 820;
-        MinimumSize = new Size(980, 720);
+        this.MinimumSize = new Size(1024, 720);
+        this.Size = new Size(1024, 768);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -119,11 +118,11 @@ public sealed class MainForm : Form
         rootLayout.Dock = DockStyle.Fill;
 
         rootLayout.RowStyles.Clear();
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 180f)); // CORREÇÃO TITULO: 180px garante que o DataSmart NUNCA corte no topo
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100f)); // Cards de Métricas
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));   // Grid de Módulos (Flexible)
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));   // Seção Inferior: Split Logs/Banco (Flexible)
-        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 75f));  // CORREÇÃO RODAPÉ: 75px impede o esmagamento dos botões abaixo da viewport
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 160f)); // Linha 0: Header Espaçoso (Previne corte do título/subtítulo)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 110f)); // Linha 1: Cards Superiores (Espaço total garantido)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 55f));   // Linha 2: Grid de Módulos (Se ajusta ao centro)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45f));   // Linha 3: Split Inferior (Logs + Banco)
+        rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 70f));  // Linha 4: RODAPÉ BLINDADO (Nunca sai da tela)
         Controls.Add(rootLayout);
 
         var headerPanel = new Panel
@@ -341,8 +340,10 @@ public sealed class MainForm : Form
             Margin = new Padding(0),
             Padding = new Padding(0)
         };
-        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62f));
-        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38f));
+        bottomPanel.SuspendLayout();
+        bottomPanel.ColumnStyles.Clear();
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320f));
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
         rootLayout.Controls.Add(bottomPanel, 0, 3);
 
         var databaseCard = new Panel
@@ -375,7 +376,6 @@ public sealed class MainForm : Form
         };
         databaseLayout.Controls.Add(databaseTitle, 0, 0);
 
-        // STEP 2: REFACTOR DATABASE CONTAINER FLOW & ENFORCE RADIOBUTTON AUTOSIZE
         var bancoPanel = new FlowLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -387,38 +387,35 @@ public sealed class MainForm : Form
         };
         databaseLayout.Controls.Add(bancoPanel, 0, 1);
 
+        var radioButtons = new[] { _rbNoDb, _rbOnlyLoad, _rbLoadProcess, _rbLoadProcessClose };
+        foreach (var rb in radioButtons)
+        {
+            if (rb != null)
+            {
+                rb.AutoSize = true;
+                rb.MinimumSize = new Size(280, 24);
+                rb.MaximumSize = new Size(300, 0);
+                rb.Margin = new Padding(10, 8, 10, 8);
+                rb.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+                rb.ForeColor = Color.White;
+            }
+        }
+
         _rbNoDb.Text = "Não executar";
-        _rbNoDb.AutoSize = true;
-        _rbNoDb.MinimumSize = new Size(260, 26);
-        _rbNoDb.Margin = new Padding(8, 6, 8, 6);
-        _rbNoDb.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-        _rbNoDb.ForeColor = Color.White;
         _rbNoDb.Checked = true;
         bancoPanel.Controls.Add(_rbNoDb);
 
         _rbOnlyLoad.Text = "Apenas carregar arquivos";
-        _rbOnlyLoad.AutoSize = true;
-        _rbOnlyLoad.MinimumSize = new Size(260, 26);
-        _rbOnlyLoad.Margin = new Padding(8, 6, 8, 6);
-        _rbOnlyLoad.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-        _rbOnlyLoad.ForeColor = Color.White;
         bancoPanel.Controls.Add(_rbOnlyLoad);
 
         _rbLoadProcess.Text = "Carregar e processar arquivos";
-        _rbLoadProcess.AutoSize = true;
-        _rbLoadProcess.MinimumSize = new Size(260, 26);
-        _rbLoadProcess.Margin = new Padding(8, 6, 8, 6);
-        _rbLoadProcess.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-        _rbLoadProcess.ForeColor = Color.White;
         bancoPanel.Controls.Add(_rbLoadProcess);
 
         _rbLoadProcessClose.Text = "Carregar, processar e fechar";
-        _rbLoadProcessClose.AutoSize = true;
-        _rbLoadProcessClose.MinimumSize = new Size(260, 26);
-        _rbLoadProcessClose.Margin = new Padding(8, 6, 8, 6);
-        _rbLoadProcessClose.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-        _rbLoadProcessClose.ForeColor = Color.White;
         bancoPanel.Controls.Add(_rbLoadProcessClose);
+
+        bancoPanel.ResumeLayout(false);
+        bancoPanel.PerformLayout();
 
         _lblStatus.Text = "Inicializando...";
         _lblStatus.ForeColor = Color.White;
@@ -432,12 +429,8 @@ public sealed class MainForm : Form
             BackColor = cardBackground,
             Padding = new Padding(16)
         };
-        // FIX: Impede que o painel de logs aumente o layout pai.
-        // Definimos um teto (MaximumSize) e desabilitamos AutoSize para obrigar
-        // o RichTextBox a usar scroll interno em vez de expandir a janela.
         logCard.AutoSize = false;
-        logCard.MaximumSize = new Size(0, 320); // teto defensivo para logs
-        
+        logCard.MaximumSize = new Size(0, 320);
         bottomPanel.Controls.Add(logCard, 1, 0);
 
         var logTitle = new Label
@@ -456,10 +449,8 @@ public sealed class MainForm : Form
         _logConsole.BorderStyle = BorderStyle.FixedSingle;
         _logConsole.ReadOnly = true;
         _logConsole.Font = new Font("Consolas", 9);
-        // FIX: Força scroll interno no RichTextBox para evitar que o conteúdo
-        // empurre o painel pai. WordWrap desligado para manter layout das linhas.
         _logConsole.ScrollBars = RichTextBoxScrollBars.Vertical;
-        _logConsole.WordWrap = false;
+        _logConsole.WordWrap = true;
         _logConsole.AutoSize = false;
         _logConsole.MaximumSize = new Size(0, 300);
         logCard.Controls.Add(_logConsole);
@@ -482,10 +473,10 @@ public sealed class MainForm : Form
             Dock = DockStyle.Fill,
             ColumnCount = 2,
             RowCount = 1,
-            Padding = new Padding(10, 5, 10, 10)
+            Padding = new Padding(10, 5, 10, 15)
         };
         footerTable.ColumnStyles.Clear();
-        footerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40f));
+        footerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45f));
         footerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 540f));
 
         var progressWrapper = new FlowLayoutPanel
@@ -544,11 +535,6 @@ public sealed class MainForm : Form
         _btnRefresh.Dock = DockStyle.Fill;
         _btnRefresh.AutoSize = false;
 
-        buttonGrid.Controls.Add(_btnUpdate, 0, 0);
-        buttonGrid.Controls.Add(_btnClose, 1, 0);
-        buttonGrid.Controls.Add(_btnOpenLog, 2, 0);
-        buttonGrid.Controls.Add(_btnRefresh, 3, 0);
-
         footerTable.Controls.Add(buttonGrid, 1, 0);
         footerPanel.Controls.Add(footerTable);
 
@@ -567,6 +553,8 @@ public sealed class MainForm : Form
             b.MouseEnter += (_, _) => b.BackColor = ControlPaint.Light(normal, 0.06f);
             b.MouseLeave += (_, _) => b.BackColor = normal;
         }
+        bottomPanel.ResumeLayout(false);
+        bottomPanel.PerformLayout();
         rootLayout.ResumeLayout(false);
         rootLayout.PerformLayout();
         this.ResumeLayout(false);
